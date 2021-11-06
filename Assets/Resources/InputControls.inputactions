@@ -2,19 +2,27 @@
     "name": "InputControls",
     "maps": [
         {
-            "name": "Movement",
+            "name": "GameRunning",
             "id": "6c098fcd-1ece-470e-87a7-8902e3e485df",
             "actions": [
                 {
-                    "name": "Move",
-                    "type": "PassThrough",
-                    "id": "814aea12-c79d-4d1d-8f5b-ff32507b4de7",
-                    "expectedControlType": "Stick",
+                    "name": "Pause",
+                    "type": "Button",
+                    "id": "3ce60a73-575a-4afe-b644-79fd362a617c",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
                 },
                 {
-                    "name": "Jump",
+                    "name": "Move",
+                    "type": "Value",
+                    "id": "814aea12-c79d-4d1d-8f5b-ff32507b4de7",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Attack",
                     "type": "Button",
                     "id": "02890115-7621-432f-9003-58eb8ca3f08b",
                     "expectedControlType": "Button",
@@ -22,7 +30,7 @@
                     "interactions": ""
                 },
                 {
-                    "name": "Crouch",
+                    "name": "Use",
                     "type": "Button",
                     "id": "5e54acf0-30cc-4779-8bc2-a540e212a514",
                     "expectedControlType": "Button",
@@ -104,7 +112,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "GamepadControlScheme",
-                    "action": "Jump",
+                    "action": "Attack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -115,7 +123,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyboardControlScheme",
-                    "action": "Jump",
+                    "action": "Attack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -126,18 +134,195 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "GamepadControlScheme",
-                    "action": "Crouch",
+                    "action": "Use",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
                     "id": "75a9fc33-e9c6-434a-8e7e-31f37be8b5a3",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyboardControlScheme",
+                    "action": "Use",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "213b5cdf-266a-4bfb-99e8-69e40f470ad0",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyboardControlScheme",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "bdb5614a-4b13-4dff-885b-0592680aacde",
+                    "path": "*/{Menu}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "GamepadControlScheme",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "GamePlanning",
+            "id": "c253926d-96fa-4eb7-801b-761a782bdcc3",
+            "actions": [
+                {
+                    "name": "Pause",
+                    "type": "Button",
+                    "id": "f2d2e217-a66c-4a2f-a52f-81b3dda94386",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Move",
+                    "type": "Value",
+                    "id": "80b9c658-8b2e-4913-bb10-825e16401054",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Use",
+                    "type": "Button",
+                    "id": "5028173f-8bf6-4648-ba2e-ed5e75d454b2",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Back",
+                    "type": "Button",
+                    "id": "cb9a8de1-8687-44f6-9ba6-651c52c516b7",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "c986b89a-6203-4635-913a-09c252efc3b6",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyboardControlScheme",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "WASD",
+                    "id": "5745fbde-52f2-48ea-a5bf-2acbd6a72d25",
+                    "path": "2DVector",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "up",
+                    "id": "db16c6d2-c8c6-4721-81a8-4003b42390f3",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyboardControlScheme",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "down",
+                    "id": "0845fe20-f34e-483c-a4b6-df4cb3f9cdb9",
                     "path": "<Keyboard>/s",
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyboardControlScheme",
-                    "action": "Crouch",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "left",
+                    "id": "8910062c-2db0-4372-bb03-4f742984226a",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyboardControlScheme",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "right",
+                    "id": "39f6ee52-1c36-46d5-93bd-1976677b00fd",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyboardControlScheme",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "6f11fba6-121e-4d6d-ba98-cf1cd04858da",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyboardControlScheme",
+                    "action": "Use",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3ce96372-257a-442b-bb1e-177cc08319ec",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyboardControlScheme",
+                    "action": "Back",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Menu",
+            "id": "59d0d1c8-648c-4808-9eea-38bdb4c4e52d",
+            "actions": [
+                {
+                    "name": "New action",
+                    "type": "Button",
+                    "id": "19b913b9-1835-44e6-8ae6-3ef0eef16724",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "8abaca4e-5151-4003-a1cf-ae55097fa002",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "New action",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

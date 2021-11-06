@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -6,7 +7,13 @@ public class AudioManager : MonoBehaviour
 {
     public c_AudioClip[] audioClips;
 
-    public static AudioManager instance;
+    private static AudioManager instance;
+
+    public static AudioManager GetInstance()
+    {
+        return instance;
+    }
+
     void Awake()
     {
         if (instance == null)
@@ -39,11 +46,16 @@ public class AudioManager : MonoBehaviour
     {
         foreach(c_AudioClip ac in audioClips)
         {
-            if(ac.playOnAwake) ac.source.Play();
+            if (ac.playOnAwake)
+            {
+                ac.source.volume = 0f;
+                ac.source.Play();
+                StartCoroutine(FadeSound(ac, 5f, true));
+            }
         }
     }
 
-    public void PlayClip(string name)
+    public void PlayClip(string name, bool fading = false)
     {
         c_AudioClip ac = Array.Find(audioClips, audioClip => audioClip.name == name);
         if (ac == null)
@@ -59,22 +71,34 @@ public class AudioManager : MonoBehaviour
         {
             ac.source.Play();
         }
+        if (fading)
+        {
+            StopCoroutine(FadeSound(ac, 2.5f));
+        }
     }
 
-    public void PlayClip(int idx)
+    public void PlayClip(string name, float randomPitchStart, float randomPitchEnd = 1f, float fading = 0f)
     {
-        if (idx >= audioClips.Length)
+        randomPitchStart = Mathf.Clamp01(randomPitchStart);
+        randomPitchEnd = Mathf.Clamp01(randomPitchEnd);
+        c_AudioClip ac = Array.Find(audioClips, audioClip => audioClip.name == name);
+        if (ac == null)
         {
-            Debug.LogWarning("There is no " + idx + " sound!");
+            Debug.LogWarning("Sound " + name + " not found!");
             return;
         }
-        if ((!audioClips[idx].source.isPlaying) && (audioClips[idx].source.time != 0))
+        if ((!ac.source.isPlaying) && (ac.source.time != 0))
         {
-            audioClips[idx].source.UnPause();
+            ac.source.UnPause();
         }
         else
         {
-            audioClips[idx].source.Play();
+            ac.source.pitch = UnityEngine.Random.Range(randomPitchStart, randomPitchEnd);
+            ac.source.Play();
+        }
+        if (fading != 0f)
+        {
+            StopCoroutine(FadeSound(ac, fading));
         }
     }
 
@@ -89,16 +113,6 @@ public class AudioManager : MonoBehaviour
         ac.source.Pause();
     }
 
-    public void PauseClip(int idx)
-    {
-        if (idx >= audioClips.Length)
-        {
-            Debug.LogWarning("There is no " + idx + " sound!");
-            return;
-        }
-        audioClips[idx].source.Pause();
-    }
-
     public void StopClip(string name)
     {
         c_AudioClip ac = Array.Find(audioClips, audioClip => audioClip.name == name);
@@ -108,16 +122,6 @@ public class AudioManager : MonoBehaviour
             return;
         }
         ac.source.Stop();
-    }
-
-    public void StopClip(int idx)
-    {
-        if (idx >= audioClips.Length)
-        {
-            Debug.LogWarning("There is no " + idx + " sound!");
-            return;
-        }
-        audioClips[idx].source.Stop();
     }
 
     public void PauseAll()
@@ -150,9 +154,35 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public void StopAll()
+    public void StopAll(bool leaveUnpausable = false)
     {
         foreach (c_AudioClip ac in audioClips)
+        {
+            if (leaveUnpausable && ac.unpausable) continue;
+            ac.source.Stop();
+        }
+    }
+
+    public void FadeChangeSound(string oldSound, string newSound, float fadeDuration, bool mix)
+    {
+        c_AudioClip acOld = Array.Find(audioClips, audioClip => audioClip.name == oldSound);
+        c_AudioClip acNew = Array.Find(audioClips, audioClip => audioClip.name == newSound);
+        acNew.source.Play();
+        StartCoroutine(FadeSound(acOld, fadeDuration, false));
+        StartCoroutine(FadeSound(acNew, fadeDuration, true));
+    }
+
+    IEnumerator FadeSound(c_AudioClip ac, float duration, bool fadeUp = false)
+    {
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            ac.source.volume = Mathf.Lerp(fadeUp ? 0f : ac.volume , fadeUp ? ac.volume : 0f, elapsed / duration);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        ac.source.volume = fadeUp ? ac.volume : 0f;
+        if (ac.source.volume == 0f)
         {
             ac.source.Stop();
         }
