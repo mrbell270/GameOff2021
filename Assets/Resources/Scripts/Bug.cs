@@ -9,7 +9,7 @@ public abstract class Bug
     protected string bugDesc;
     protected EBugType bugType;
     private EBugState bugState;
-    public EBugType GetType() { return bugType; }
+    public EBugType GetBugType() { return bugType; }
     public string GetName() { return bugName; }
     public string GetDescription() { return bugDesc; }
     public EBugState GetState() { return bugState; }

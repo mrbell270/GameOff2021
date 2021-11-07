@@ -12,10 +12,10 @@ TagManager:
   - 
   - Water
   - UI
-  - MovementBody
-  - 
-  - 
-  - 
+  - Player
+  - Terminal
+  - Ground
+  - PseudoGround
   - 
   - 
   - 

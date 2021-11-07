@@ -14,7 +14,7 @@ public class Player : MonoBehaviour
     [Header("Movement Inner Variables")]
     [VerticalGroup("Movement")]
     [SerializeField]
-    MovementController movementController;
+    public MovementController movementController;
     [VerticalGroup("Movement")]
     [SerializeField]
     float jumpingError;
@@ -26,6 +26,9 @@ public class Player : MonoBehaviour
 
     [Header("Planning Mode")]
     public bool isAtTerminal;
+
+    [Header("Bugs")]
+    bool isGravitated;
 
     public static Player GetInstance()
     {
@@ -46,7 +49,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         isPlaying = false;
-        isPlaying = true;
+        isGravitated = true;
     }
 
     void ResetGame()
@@ -72,10 +75,17 @@ public class Player : MonoBehaviour
     {
         if (!movementVector.Equals(Vector2.zero))
         {
-            float movement = movementVector.x;
-            bool isJumping = movementVector.y > jumpingError;
-            bool isCrouching = movementVector.y < -crouchingError;
-            movementController.Move(movement, isCrouching, isJumping);
+            if (isGravitated)
+            {
+                float movement = movementVector.x;
+                bool isJumping = movementVector.y > jumpingError;
+                bool isCrouching = movementVector.y < -crouchingError;
+                movementController.Move(movement, isCrouching, isJumping);
+            }
+            else
+            {
+                movementController.MoveNoGravity(movementVector);
+            }
         }
     }
 
@@ -95,6 +105,8 @@ public class Player : MonoBehaviour
         }
     }
 
+    // States
+
     public void SetRunning()
     {
         isPlaying = true;
@@ -113,12 +125,44 @@ public class Player : MonoBehaviour
         Time.timeScale = 0;
     }
 
+    // States END
+
+    public void GetPickup(Pickup pickup)
+    {
+        switch (pickup.pickupType)
+        {
+            case (EPickupType.Bug):
+                BugManager.GetInstance().AddBug(pickup.GetComponent<PickupBug>().bugType);
+                break;
+            case (EPickupType.Slot):
+                BugManager.GetInstance().AddSlot();
+                break;
+            case (EPickupType.Health):
+                // ADD HP
+                break;
+            default:
+                Debug.Log("Pickup " + pickup.gameObject.name + " not initialized.");
+                break;
+        }
+    }
+
+    // Bugs
+    public void SetGravityBug(bool enable)
+    {
+        isGravitated = !enable;
+        GetComponent<Rigidbody2D>().gravityScale = isGravitated ? 3 : 1;
+    }
+
+    // Bugs END
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Terminal"))
         {
-            isAtTerminal = true;
-            collision.GetComponent<Terminal>().SetPlayerNear(isAtTerminal);
+            if (BugManager.GetInstance().openedBugs.Count > 0)
+            {
+                isAtTerminal = true;
+                collision.GetComponent<Terminal>().SetPlayerNear(isAtTerminal);
+            }
         }
     }
 

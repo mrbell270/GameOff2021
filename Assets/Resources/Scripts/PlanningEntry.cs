@@ -33,7 +33,7 @@ public class PlanningEntry : MonoBehaviour
         imBackground.color = focused ? colorFocused : colorUnfocused;
     }
 
-    public string ToString()
+    public override string ToString()
     {
         return tmpName.text + " " + tmpState.text;
     }

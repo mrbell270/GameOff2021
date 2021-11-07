@@ -63,7 +63,7 @@ public class MovementController : MonoBehaviour
 
 	public void Move(float move, bool crouch, bool jump)
 	{
-		if (!crouch)
+		if (!crouch && _wasCrouching)
 		{
 			if (Physics2D.OverlapCircle(headCheck.position, ceilingRadius, groundLayers))
 			{
@@ -117,10 +117,35 @@ public class MovementController : MonoBehaviour
 		}
 	}
 
+	public void MoveNoGravity(Vector2 move)
+    {
+		Vector3 targetVelocity = move * 10f;
+		rb2d.velocity = Vector3.SmoothDamp(rb2d.velocity, targetVelocity, ref _velocity, movementSmoothing);
+
+		if (move.x > 0 && !isFacingRight)
+		{
+			Flip();
+		}
+		else if (move.x < 0 && isFacingRight)
+		{
+			Flip();
+		}
+	}
+
 
 	private void Flip()
 	{
 		isFacingRight = !isFacingRight;
 		transform.Rotate(0, 180, 0);
+	}
+
+	public void AddGroundLayer(int layerId)
+    {
+		groundLayers += 1 << layerId;
+	}
+
+	public void RemoveGroundLayer(int layerId)
+    {
+		groundLayers -= 1 << layerId;
 	}
 }
