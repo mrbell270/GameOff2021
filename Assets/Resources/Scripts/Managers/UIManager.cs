@@ -27,11 +27,14 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     GameObject PlanningUI;
     [SerializeField]
+    TextMeshProUGUI PlanningOpenedSlots;
+    [SerializeField]
     GameObject EntryTemplate;
     List<GameObject> planningEntries = new List<GameObject>();
     int currentEntryIdx;
 
-    [Header("Death Screen")]
+    [Header("UI State")]
+    bool isPlanning;
 
     [Header("Sound")]
     [SerializeField]
@@ -57,6 +60,17 @@ public class UIManager : MonoBehaviour
 
     void Update()
     {
+        if (isPlanning)
+        {
+            PlanningOpenedSlots.text = bm.bugSlotAmountAvail.ToString();
+            for (int i=0; i<planningEntries.Count; i++)
+            {             
+                PlanningEntry pe = planningEntries[i].GetComponent<PlanningEntry>();
+                Bug bug = bm.availBugs[i];
+                pe.SetName(bug.GetName());
+                pe.SetState(bug.GetState().ToString());
+            }
+        }
     }
 
     public void StartGame()
@@ -69,23 +83,29 @@ public class UIManager : MonoBehaviour
 
     public void StartPlanning()
     {
-        foreach(IBug bug in bm.availBugs)
+        isPlanning = true;
+
+        foreach (Bug bug in bm.availBugs)
         {
             GameObject entry = Instantiate(EntryTemplate, EntryTemplate.transform.parent, false);
             PlanningEntry pe = entry.GetComponent<PlanningEntry>();
             pe.SetName(bug.GetName());
-            pe.SetState("Ready");
+            pe.SetState(bug.GetState().ToString());
             pe.SetFocused(false);
             entry.SetActive(true);
             planningEntries.Add(entry);
         }
         currentEntryIdx = 0;
         planningEntries[currentEntryIdx].GetComponent<PlanningEntry>().SetFocused(true);
+        PlanningOpenedSlots.text = bm.bugSlotAmountAvail.ToString();
+
         PlanningUI.SetActive(true);
     }
 
     public void StopPlanning()
     {
+        isPlanning = false;
+
         PlanningUI.SetActive(false);
 
         foreach (GameObject entry in planningEntries)
@@ -93,6 +113,28 @@ public class UIManager : MonoBehaviour
             Destroy(entry);
         }
         planningEntries.Clear();
+    }
+
+    public void PlanningChangeSelectedEntry(int dir)
+    {
+        planningEntries[currentEntryIdx].GetComponent<PlanningEntry>().SetFocused(false);
+        currentEntryIdx = Mathf.Clamp(currentEntryIdx + dir, 0, planningEntries.Count - 1);
+        planningEntries[currentEntryIdx].GetComponent<PlanningEntry>().SetFocused(true);
+    }
+
+    public void PlanningChangeEntryState()
+    {
+        EBugState curState = bm.availBugs[currentEntryIdx].GetState();
+        if (curState.Equals(EBugState.Loaded))
+        {
+            bm.UnchooseBug(currentEntryIdx);
+        }
+        else if (curState.Equals(EBugState.Waiting))
+        {
+            bm.ChooseBug(currentEntryIdx);
+        }
+        planningEntries[currentEntryIdx].GetComponent<PlanningEntry>().SetState(bm.availBugs[currentEntryIdx].GetState().ToString());
+        PlanningOpenedSlots.text = bm.bugSlotAmountAvail.ToString();
     }
 
     public void MuteSound()

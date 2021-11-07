@@ -14,7 +14,7 @@ public class GameStateManager : MonoBehaviour
 
     [SerializeField]
     [ReadOnly]
-    GameState currentState;
+    EGameState currentState;
 
 
     public UnityEvent OnRunningStart;
@@ -41,7 +41,7 @@ public class GameStateManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        SetState(GameState.GameRunning);
+        SetState(EGameState.GameRunning);
     }
 
     // Update is called once per frame
@@ -50,39 +50,43 @@ public class GameStateManager : MonoBehaviour
         
     }
 
-    public void SetState(GameState newState)
+    public void SetState(EGameState newState)
     {
         switch (currentState) {
-            case (GameState.GameRunning):
+            case (EGameState.GameRunning):
                 OnRunningStop?.Invoke();
                 break;
-            case (GameState.GamePlanning):
+            case (EGameState.GamePlanning):
                 OnPlanningStop?.Invoke();
                 break;
-            case (GameState.PauseMenu):
+            case (EGameState.PauseMenu):
                 OnPauseStop?.Invoke();
                 break;
-            case (GameState.MainMenu):
+            case (EGameState.MainMenu):
                 OnMainMenuStop?.Invoke();
                 break;
             default:
+                OnRunningStop?.Invoke();
+                OnPlanningStop?.Invoke();
+                OnPauseStop?.Invoke();
+                OnMainMenuStop?.Invoke();
                 break;
         }
         switch (newState) {
-            case (GameState.GameRunning):
-                currentState = GameState.GameRunning;
+            case (EGameState.GameRunning):
+                currentState = EGameState.GameRunning;
                 OnRunningStart?.Invoke();
                 break;
-            case (GameState.GamePlanning):
-                currentState = GameState.GamePlanning;
+            case (EGameState.GamePlanning):
+                currentState = EGameState.GamePlanning;
                 OnPlanningStart?.Invoke();
                 break;
-            case (GameState.PauseMenu):
-                currentState = GameState.PauseMenu;
+            case (EGameState.PauseMenu):
+                currentState = EGameState.PauseMenu;
                 OnPauseStart?.Invoke();
                 break;
-            case (GameState.MainMenu):
-                currentState = GameState.MainMenu;
+            case (EGameState.MainMenu):
+                currentState = EGameState.MainMenu;
                 OnMainMenuStart?.Invoke();
                 break;
             default:

@@ -10,15 +10,15 @@ public class BugManager : MonoBehaviour
         return instance;
     }
 
-    [Header("")]
-    List<IBug> allBugs;
-    public List<IBug> availBugs;
-    public Dictionary<int, IBug> chosenBugs;
+    [Header("Bugs Info")]
+    List<Bug> allBugs;
+    public List<Bug> availBugs;
 
-    int bugSlotAmountOpened;
-    int bugSlotAmountAvail;
+    public int bugSlotAmountAvail;
 
-
+    [Header("Collision")]
+    [SerializeField]
+    PseudoGroundManager pseudoGroundManager;
 
     private void Awake()
     {
@@ -34,42 +34,78 @@ public class BugManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        allBugs = new List<IBug>();
-        availBugs = new List<IBug>();
-        chosenBugs = new Dictionary<int, IBug>();
+        allBugs = new List<Bug>();
+        availBugs = new List<Bug>();
 
-        bugSlotAmountOpened = 1;
-        bugSlotAmountAvail = 1;
-        IBug b0 = new BugSpaceSkip();
-        allBugs.Add(b0);
-        availBugs.Add(b0);
-        availBugs.Add(b0);
-        availBugs.Add(b0);
-        availBugs.Add(b0);
+        bugSlotAmountAvail = 2;
+        AddBug(new BugSpaceSkip());
+        AddBug(new BugGravity());
+        AddBug(new BugCollision());
     }
 
-    public void ChooseBug(int bugNum, int slotNum)
+    public void ChooseBug(int bugNum)
     {
-        if (bugSlotAmountAvail > 0 && availBugs.Count > bugNum && !chosenBugs.ContainsKey(slotNum))
+        if (bugSlotAmountAvail > 0 && availBugs.Count > bugNum)
         {
-            IBug b = availBugs[bugNum];
-            if (!chosenBugs.ContainsValue(b))
+            Bug bug = availBugs[bugNum];
+            if (bug.GetState() != EBugState.Loaded)
             {
-                chosenBugs.Add(slotNum, b);
+                bug.SetState(EBugState.Loaded);
                 bugSlotAmountAvail--;
-                b.ApplyEffects();
+                ApplyBug(bug.GetType());
+            }
+        }
+        else
+        {
+            Debug.Log("Opened Slots = " + bugSlotAmountAvail);
+        }
+    }
+
+    public void UnchooseBug(int bugNum)
+    {
+        if (availBugs.Count > bugNum)
+        {
+            Bug bug = availBugs[bugNum];
+            if (bug.GetState() != EBugState.Waiting)
+            {
+                bug.SetState(EBugState.Waiting);
+                bugSlotAmountAvail++;
+                RevertBug(bug.GetType());
             }
         }
     }
 
-    public void UnchooseBug(int slotNum)
+    void AddBug(Bug bug, EBugState state = EBugState.Waiting)
     {
-        if (chosenBugs.Count > slotNum)
+        bug.SetState(state);
+        availBugs.Add(bug);
+    }
+
+    void ApplyBug(EBugType type)
+    {
+        Debug.Log(type.ToString() + " applied");
+        switch (type) {
+            case (EBugType.Collision):
+                Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("PseudoGround"), true);
+                pseudoGroundManager.SetVisual(true);
+                break;
+            default:
+                Debug.Log("NOTE: No special actions for this bug!");
+                break;
+        }
+    }
+    void RevertBug(EBugType type)
+    {
+        Debug.Log(type.ToString() + " reverted");
+        switch (type)
         {
-            IBug b = chosenBugs[slotNum];
-            chosenBugs.Remove(slotNum);
-            bugSlotAmountAvail++;
-            b.RevertEffects();
+            case (EBugType.Collision):
+                Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("PseudoGround"), false);
+                pseudoGroundManager.SetVisual(false);
+                break;
+            default:
+                Debug.Log("NOTE: No special actions for this bug!");
+                break;
         }
     }
 }

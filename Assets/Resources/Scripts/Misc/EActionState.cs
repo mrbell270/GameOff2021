@@ -1,4 +1,4 @@
-public enum ActionState
+public enum EActionState
 {
     Started
     , Performed

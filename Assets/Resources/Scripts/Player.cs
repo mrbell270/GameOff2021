@@ -10,8 +10,6 @@ public class Player : MonoBehaviour
     [Header("Essentials")]
     static Player instance;
     bool isPlaying;
-    bool isGameOver;
-    float timer;
 
     [Header("Movement Inner Variables")]
     [VerticalGroup("Movement")]
@@ -25,6 +23,9 @@ public class Player : MonoBehaviour
     float crouchingError;
     [VerticalGroup("Movement")]
     Vector2 movementVector;
+
+    [Header("Planning Mode")]
+    public bool isAtTerminal;
 
     public static Player GetInstance()
     {
@@ -45,7 +46,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         isPlaying = false;
-        isGameOver = false;
+        isPlaying = true;
     }
 
     void ResetGame()
@@ -54,14 +55,14 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        if (isPlaying && !isGameOver)
+        if (isPlaying)
         {
         }
     }
     
     private void FixedUpdate()
     {
-        if (isPlaying && !isGameOver)
+        if (isPlaying)
         {
             Move();
         }
@@ -82,13 +83,13 @@ public class Player : MonoBehaviour
     {
     }
 
-    public void MoveAction(UnityEngine.InputSystem.InputAction.CallbackContext ctx, ActionState state)
+    public void MoveAction(UnityEngine.InputSystem.InputAction.CallbackContext ctx, EActionState state)
     {
-        if (state.Equals(ActionState.Started) || state.Equals(ActionState.Performed))
+        if (state.Equals(EActionState.Started) || state.Equals(EActionState.Performed))
         {
             movementVector = ctx.ReadValue<Vector2>();
         }
-        else if (state.Equals(ActionState.Cancelled))
+        else if (state.Equals(EActionState.Cancelled))
         {
             movementVector = Vector2.zero;
         }
@@ -110,5 +111,23 @@ public class Player : MonoBehaviour
     {
         isPlaying = false;
         Time.timeScale = 0;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Terminal"))
+        {
+            isAtTerminal = true;
+            collision.GetComponent<Terminal>().SetPlayerNear(isAtTerminal);
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Terminal"))
+        {
+            isAtTerminal = false;
+            collision.GetComponent<Terminal>().SetPlayerNear(isAtTerminal);
+        }
     }
 }

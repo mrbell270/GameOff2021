@@ -2,25 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BugSpaceSkip : IBug
+public class BugSpaceSkip : Bug
 {
-    public void ApplyEffects()
+    public BugSpaceSkip(EBugState state = EBugState.Waiting)
     {
-        Debug.Log("BugSpaceSkip Applied");
-    }
-
-    public void RevertEffects()
-    {
-        Debug.Log("BugSpaceSkip reverted");
-    }
-
-    public string GetDescription()
-    {
-        return "SpaceSkip Bug";
-    }
-
-    public string GetName()
-    {
-        return "BugSpaceSkip";
+        bugName = "Skip Space";
+        bugDesc = "Move by increment, not physics";
+        bugType = EBugType.Skip;
+        SetState(state);
     }
 }
