@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Terminal : MonoBehaviour
+public class BlockedArea : MonoBehaviour
 {
     Color colorPlayerIsNear = Color.magenta;
     Color colorPlayerIsFar = Color.cyan;

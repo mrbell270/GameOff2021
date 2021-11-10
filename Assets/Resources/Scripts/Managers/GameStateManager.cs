@@ -25,6 +25,8 @@ public class GameStateManager : MonoBehaviour
     public UnityEvent OnPauseStop;
     public UnityEvent OnMainMenuStart;
     public UnityEvent OnMainMenuStop;
+    public UnityEvent OnDialogStart;
+    public UnityEvent OnDialogStop;
 
 
     private void Awake()
@@ -65,11 +67,15 @@ public class GameStateManager : MonoBehaviour
             case (EGameState.MainMenu):
                 OnMainMenuStop?.Invoke();
                 break;
+            case (EGameState.Dialog):
+                OnDialogStop?.Invoke();
+                break;
             default:
                 OnRunningStop?.Invoke();
                 OnPlanningStop?.Invoke();
                 OnPauseStop?.Invoke();
                 OnMainMenuStop?.Invoke();
+                OnDialogStop?.Invoke();
                 break;
         }
         switch (newState) {
@@ -88,6 +94,10 @@ public class GameStateManager : MonoBehaviour
             case (EGameState.MainMenu):
                 currentState = EGameState.MainMenu;
                 OnMainMenuStart?.Invoke();
+                break;
+            case (EGameState.Dialog):
+                currentState = EGameState.MainMenu;
+                OnDialogStart?.Invoke();
                 break;
             default:
                 break;

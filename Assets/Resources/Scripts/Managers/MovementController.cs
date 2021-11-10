@@ -8,6 +8,7 @@ public class MovementController : MonoBehaviour
 {
 	[VerticalGroup("Movement")]
 	[SerializeField] private Rigidbody2D rb2d;
+	[SerializeField] private float movementSpeed = 10f;                          
 	[SerializeField] private float jumpForce = 400f;                          
 	[Range(0, 1)] [SerializeField] private float crouchSpeedMultiplier = .36f;          
 	[Range(0, .3f)] [SerializeField] private float movementSmoothing = .05f;  
@@ -98,7 +99,7 @@ public class MovementController : MonoBehaviour
 				}
 			}
 
-			Vector3 targetVelocity = new Vector2(move * 10f, rb2d.velocity.y);
+			Vector3 targetVelocity = new Vector2(move * movementSpeed, rb2d.velocity.y);
 			rb2d.velocity = Vector3.SmoothDamp(rb2d.velocity, targetVelocity, ref _velocity, movementSmoothing);
 
 			if (move > 0 && !isFacingRight)
@@ -119,7 +120,7 @@ public class MovementController : MonoBehaviour
 
 	public void MoveNoGravity(Vector2 move)
     {
-		Vector3 targetVelocity = move * 10f;
+		Vector3 targetVelocity = move * movementSpeed;
 		rb2d.velocity = Vector3.SmoothDamp(rb2d.velocity, targetVelocity, ref _velocity, movementSmoothing);
 
 		if (move.x > 0 && !isFacingRight)

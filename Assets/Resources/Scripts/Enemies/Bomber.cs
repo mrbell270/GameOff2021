@@ -37,6 +37,5 @@ public class Bomber : MonoBehaviour
         GameObject bomb = Instantiate(bombTemplate, shootPoint);
         bomb.SetActive(true);
         bomb.GetComponent<Rigidbody2D>().AddForce(new Vector2(Mathf.Sign(shootPoint.localPosition.x) * shootPower, shootPower));
-        bomb.SetActive(true);
     }
 }

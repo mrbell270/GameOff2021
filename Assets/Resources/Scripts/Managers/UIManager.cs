@@ -20,14 +20,10 @@ public class UIManager : MonoBehaviour
 
     [Header("Main")]
     EventSystem eventSystem;
-    [SerializeField]
-    BugManager bm;
 
     [Header("Planning Screen")]
     [SerializeField]
     GameObject PlanningUI;
-    [SerializeField]
-    TextMeshProUGUI PlanningOpenedSlots;
     [SerializeField]
     TextMeshProUGUI PlanningBugInfo;
     [SerializeField]
@@ -62,17 +58,6 @@ public class UIManager : MonoBehaviour
 
     void Update()
     {
-        if (isPlanning)
-        {
-            PlanningOpenedSlots.text = bm.openSlotsAmount.ToString();
-            for (int i=0; i<planningEntries.Count; i++)
-            {             
-                PlanningEntry pe = planningEntries[i].GetComponent<PlanningEntry>();
-                Bug bug = bm.openedBugs[i];
-                pe.SetName(bug.GetName());
-                pe.SetState(bug.GetState().ToString());
-            }
-        }
     }
 
     public void StartGame()
@@ -87,20 +72,6 @@ public class UIManager : MonoBehaviour
     {
         isPlanning = true;
 
-        foreach (Bug bug in bm.openedBugs)
-        {
-            GameObject entry = Instantiate(EntryTemplate, EntryTemplate.transform.parent, false);
-            PlanningEntry pe = entry.GetComponent<PlanningEntry>();
-            pe.SetName(bug.GetName());
-            pe.SetState(bug.GetState().ToString());
-            pe.SetFocused(false);
-            entry.SetActive(true);
-            planningEntries.Add(entry);
-        }
-        currentEntryIdx = 0;
-        PlanningChangeSelectedEntry(0);
-        PlanningOpenedSlots.text = bm.openSlotsAmount.ToString();
-
         PlanningUI.SetActive(true);
     }
 
@@ -109,12 +80,6 @@ public class UIManager : MonoBehaviour
         isPlanning = false;
 
         PlanningUI.SetActive(false);
-
-        foreach (GameObject entry in planningEntries)
-        {
-            Destroy(entry);
-        }
-        planningEntries.Clear();
     }
 
     public void PlanningChangeSelectedEntry(int dir)
@@ -122,22 +87,12 @@ public class UIManager : MonoBehaviour
         planningEntries[currentEntryIdx].GetComponent<PlanningEntry>().SetFocused(false);
         currentEntryIdx = Mathf.Clamp(currentEntryIdx + dir, 0, planningEntries.Count - 1);
         planningEntries[currentEntryIdx].GetComponent<PlanningEntry>().SetFocused(true);
-        PlanningBugInfo.text = bm.openedBugs[currentEntryIdx].GetDescription();
+        //PlanningBugInfo.text = bm.openedBugs[currentEntryIdx].GetDescription();
     }
 
     public void PlanningChangeEntryState()
     {
-        EBugState curState = bm.openedBugs[currentEntryIdx].GetState();
-        if (curState.Equals(EBugState.Loaded))
-        {
-            bm.UnchooseBug(currentEntryIdx);
-        }
-        else if (curState.Equals(EBugState.Waiting))
-        {
-            bm.ChooseBug(currentEntryIdx);
-        }
-        planningEntries[currentEntryIdx].GetComponent<PlanningEntry>().SetState(bm.openedBugs[currentEntryIdx].GetState().ToString());
-        PlanningOpenedSlots.text = bm.openSlotsAmount.ToString();
+        planningEntries[currentEntryIdx].GetComponent<PlanningEntry>().SetState("");
     }
 
     public void MuteSound()

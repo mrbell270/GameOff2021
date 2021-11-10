@@ -14,7 +14,10 @@ public class Player : MonoBehaviour
     [Header("Movement Inner Variables")]
     [VerticalGroup("Movement")]
     [SerializeField]
-    public MovementController movementController;
+    List<MovementController> movementController;
+    [VerticalGroup("Movement")]
+    [SerializeField]
+    int currentController;
     [VerticalGroup("Movement")]
     [SerializeField]
     float jumpingError;
@@ -25,10 +28,10 @@ public class Player : MonoBehaviour
     Vector2 movementVector;
 
     [Header("Planning Mode")]
-    public bool isAtTerminal;
+    public bool isInArea;
 
     [Header("Bugs")]
-    bool isGravitated;
+    bool isFlying;
 
     public static Player GetInstance()
     {
@@ -49,7 +52,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         isPlaying = false;
-        isGravitated = true;
+        isFlying = false;
     }
 
     void ResetGame()
@@ -75,16 +78,16 @@ public class Player : MonoBehaviour
     {
         if (!movementVector.Equals(Vector2.zero))
         {
-            if (isGravitated)
+            if (!isFlying)
             {
                 float movement = movementVector.x;
                 bool isJumping = movementVector.y > jumpingError;
                 bool isCrouching = movementVector.y < -crouchingError;
-                movementController.Move(movement, isCrouching, isJumping);
+                movementController[currentController].Move(movement, isCrouching, isJumping);
             }
             else
             {
-                movementController.MoveNoGravity(movementVector);
+                movementController[currentController].MoveNoGravity(movementVector);
             }
         }
     }
@@ -132,10 +135,10 @@ public class Player : MonoBehaviour
         switch (pickup.pickupType)
         {
             case (EPickupType.Bug):
-                BugManager.GetInstance().AddBug(pickup.GetComponent<PickupBug>().bugType);
+                //BugManager.GetInstance().AddBug(pickup.GetComponent<PickupBug>().bugType);
                 break;
             case (EPickupType.Slot):
-                BugManager.GetInstance().AddSlot();
+                //BugManager.GetInstance().AddSlot();
                 break;
             case (EPickupType.Health):
                 // ADD HP
@@ -149,8 +152,8 @@ public class Player : MonoBehaviour
     // Bugs
     public void SetGravityBug(bool enable)
     {
-        isGravitated = !enable;
-        GetComponent<Rigidbody2D>().gravityScale = isGravitated ? 3 : 1;
+        //isFlying = enable;
+        //GetComponent<Rigidbody2D>().gravityScale = isFlying ? 1 : 3;
     }
 
     // Bugs END
@@ -160,8 +163,8 @@ public class Player : MonoBehaviour
         {
             if (BugManager.GetInstance().openedBugs.Count > 0)
             {
-                isAtTerminal = true;
-                collision.GetComponent<Terminal>().SetPlayerNear(isAtTerminal);
+                isInArea = true;
+                collision.GetComponent<BlockedArea>().SetPlayerNear(isInArea);
             }
         }
     }
@@ -170,8 +173,8 @@ public class Player : MonoBehaviour
     {
         if (collision.CompareTag("Terminal"))
         {
-            isAtTerminal = false;
-            collision.GetComponent<Terminal>().SetPlayerNear(isAtTerminal);
+            isInArea = false;
+            collision.GetComponent<BlockedArea>().SetPlayerNear(isInArea);
         }
     }
 }

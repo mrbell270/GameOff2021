@@ -9,7 +9,7 @@ public class BugCollision : Bug
     {
         bugName = "Collision";
         bugDesc = "Some objects have buggy colliders";
-        bugType = EBugType.Collision;
+        bugType = EBugType.Size;
         SetState(state);
     }
 }

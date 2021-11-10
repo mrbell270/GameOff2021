@@ -4,4 +4,5 @@ public enum EGameState
     , PauseMenu
     , GamePlanning
     , GameRunning
+    , Dialog
 }

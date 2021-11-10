@@ -2,5 +2,5 @@ public enum EBugType
 {
     Gravity
     , Skip
-    , Collision
+    , Size
 }

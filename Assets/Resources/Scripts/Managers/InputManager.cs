@@ -13,7 +13,6 @@ public class InputManager : MonoBehaviour
     [Header("Recievers")]
     Player player;
     GameStateManager gm;
-    BugManager bm;
     UIManager ui;
 
     public static InputManager GetInstance()
@@ -47,7 +46,6 @@ public class InputManager : MonoBehaviour
     void Start()
     {
         gm = GameStateManager.GetInstance();
-        bm = BugManager.GetInstance();
         ui = UIManager.GetInstance();
         player = Player.GetInstance();
     }
@@ -84,7 +82,7 @@ public class InputManager : MonoBehaviour
 
     private void CheckAndStartPlanning()
     {
-        if (player.isAtTerminal)
+        if (!player.isInArea)
         {
             gm.SetState(EGameState.GamePlanning);
         }
