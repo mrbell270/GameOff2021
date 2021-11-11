@@ -31,7 +31,9 @@ public class Player : MonoBehaviour
     public bool isInArea;
 
     [Header("Bugs")]
-    bool isFlying;
+    [SerializeField]
+    EBugType currentForm;
+    EBugType previousForm;
 
     public static Player GetInstance()
     {
@@ -52,7 +54,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         isPlaying = false;
-        isFlying = false;
+        currentForm = EBugType.Silent;
     }
 
     void ResetGame()
@@ -78,16 +80,16 @@ public class Player : MonoBehaviour
     {
         if (!movementVector.Equals(Vector2.zero))
         {
-            if (!isFlying)
+            if (currentForm == EBugType.Flying)
+            {
+                movementController[currentController].MoveNoGravity(movementVector);
+            }
+            else
             {
                 float movement = movementVector.x;
                 bool isJumping = movementVector.y > jumpingError;
                 bool isCrouching = movementVector.y < -crouchingError;
                 movementController[currentController].Move(movement, isCrouching, isJumping);
-            }
-            else
-            {
-                movementController[currentController].MoveNoGravity(movementVector);
             }
         }
     }
@@ -150,6 +152,26 @@ public class Player : MonoBehaviour
     }
 
     // Bugs
+
+    public void SetForm(int formId)
+    {
+        if (formId == -1)
+        {
+            // stop current
+            EBugType newForm = previousForm;
+            previousForm = currentForm;
+            currentForm = newForm;
+            // set new
+        }
+        else
+        {
+            // stop current
+            previousForm = currentForm;
+            currentForm = (EBugType)formId;
+            // set new
+        }
+        currentController = (int)currentForm;
+    }
     public void SetGravityBug(bool enable)
     {
         //isFlying = enable;
@@ -157,15 +179,17 @@ public class Player : MonoBehaviour
     }
 
     // Bugs END
+
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Terminal"))
         {
-            if (BugManager.GetInstance().openedBugs.Count > 0)
-            {
-                isInArea = true;
-                collision.GetComponent<BlockedArea>().SetPlayerNear(isInArea);
-            }
+            //if (BugManager.GetInstance().openedBugs.Count > 0)
+            //{
+            //    isInArea = true;
+            //    collision.GetComponent<BlockedArea>().SetPlayerNear(isInArea);
+            //}
         }
     }
 
@@ -173,8 +197,8 @@ public class Player : MonoBehaviour
     {
         if (collision.CompareTag("Terminal"))
         {
-            isInArea = false;
-            collision.GetComponent<BlockedArea>().SetPlayerNear(isInArea);
+            //    isInArea = false;
+            //    collision.GetComponent<BlockedArea>().SetPlayerNear(isInArea);
         }
     }
 }

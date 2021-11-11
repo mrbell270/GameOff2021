@@ -49,6 +49,46 @@ public class @InputControls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Form1"",
+                    ""type"": ""Button"",
+                    ""id"": ""ee50ccc2-d2a3-42d4-a1bc-063b9a6ed8ce"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""Form2"",
+                    ""type"": ""Button"",
+                    ""id"": ""d7235361-3fd6-4537-85ad-1e982ae8cab9"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""Form3"",
+                    ""type"": ""Button"",
+                    ""id"": ""2b7b7713-28a0-4527-8bd5-4d2331bd8adc"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""FormPrev"",
+                    ""type"": ""Button"",
+                    ""id"": ""b0575dec-5e25-4a44-8e2b-df47f07fd8f3"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""Plan"",
+                    ""type"": ""Button"",
+                    ""id"": ""a437f61d-20b9-4117-9c1e-125dffbf08d4"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -181,6 +221,61 @@ public class @InputControls : IInputActionCollection, IDisposable
                     ""processors"": """",
                     ""groups"": ""GamepadControlScheme"",
                     ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cb5c1345-1bd3-4cff-8d9f-f74d2fb0df3c"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KeyboardControlScheme"",
+                    ""action"": ""Form1"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6a9866b8-e013-4e0a-aebe-09c79a06b7f5"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KeyboardControlScheme"",
+                    ""action"": ""Form2"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7caaa89d-867e-4b90-a6ad-6676de99c6e2"",
+                    ""path"": ""<Keyboard>/3"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KeyboardControlScheme"",
+                    ""action"": ""Form3"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ecff78f7-21d9-4aa0-aa11-b5c6bdae710b"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KeyboardControlScheme"",
+                    ""action"": ""Plan"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2c26af25-bfe6-4916-aa81-198c0acc676e"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KeyboardControlScheme"",
+                    ""action"": ""FormPrev"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -373,6 +468,11 @@ public class @InputControls : IInputActionCollection, IDisposable
         m_GameRunning_Move = m_GameRunning.FindAction("Move", throwIfNotFound: true);
         m_GameRunning_Attack = m_GameRunning.FindAction("Attack", throwIfNotFound: true);
         m_GameRunning_Use = m_GameRunning.FindAction("Use", throwIfNotFound: true);
+        m_GameRunning_Form1 = m_GameRunning.FindAction("Form1", throwIfNotFound: true);
+        m_GameRunning_Form2 = m_GameRunning.FindAction("Form2", throwIfNotFound: true);
+        m_GameRunning_Form3 = m_GameRunning.FindAction("Form3", throwIfNotFound: true);
+        m_GameRunning_FormPrev = m_GameRunning.FindAction("FormPrev", throwIfNotFound: true);
+        m_GameRunning_Plan = m_GameRunning.FindAction("Plan", throwIfNotFound: true);
         // GamePlanning
         m_GamePlanning = asset.FindActionMap("GamePlanning", throwIfNotFound: true);
         m_GamePlanning_Pause = m_GamePlanning.FindAction("Pause", throwIfNotFound: true);
@@ -435,6 +535,11 @@ public class @InputControls : IInputActionCollection, IDisposable
     private readonly InputAction m_GameRunning_Move;
     private readonly InputAction m_GameRunning_Attack;
     private readonly InputAction m_GameRunning_Use;
+    private readonly InputAction m_GameRunning_Form1;
+    private readonly InputAction m_GameRunning_Form2;
+    private readonly InputAction m_GameRunning_Form3;
+    private readonly InputAction m_GameRunning_FormPrev;
+    private readonly InputAction m_GameRunning_Plan;
     public struct GameRunningActions
     {
         private @InputControls m_Wrapper;
@@ -443,6 +548,11 @@ public class @InputControls : IInputActionCollection, IDisposable
         public InputAction @Move => m_Wrapper.m_GameRunning_Move;
         public InputAction @Attack => m_Wrapper.m_GameRunning_Attack;
         public InputAction @Use => m_Wrapper.m_GameRunning_Use;
+        public InputAction @Form1 => m_Wrapper.m_GameRunning_Form1;
+        public InputAction @Form2 => m_Wrapper.m_GameRunning_Form2;
+        public InputAction @Form3 => m_Wrapper.m_GameRunning_Form3;
+        public InputAction @FormPrev => m_Wrapper.m_GameRunning_FormPrev;
+        public InputAction @Plan => m_Wrapper.m_GameRunning_Plan;
         public InputActionMap Get() { return m_Wrapper.m_GameRunning; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -464,6 +574,21 @@ public class @InputControls : IInputActionCollection, IDisposable
                 @Use.started -= m_Wrapper.m_GameRunningActionsCallbackInterface.OnUse;
                 @Use.performed -= m_Wrapper.m_GameRunningActionsCallbackInterface.OnUse;
                 @Use.canceled -= m_Wrapper.m_GameRunningActionsCallbackInterface.OnUse;
+                @Form1.started -= m_Wrapper.m_GameRunningActionsCallbackInterface.OnForm1;
+                @Form1.performed -= m_Wrapper.m_GameRunningActionsCallbackInterface.OnForm1;
+                @Form1.canceled -= m_Wrapper.m_GameRunningActionsCallbackInterface.OnForm1;
+                @Form2.started -= m_Wrapper.m_GameRunningActionsCallbackInterface.OnForm2;
+                @Form2.performed -= m_Wrapper.m_GameRunningActionsCallbackInterface.OnForm2;
+                @Form2.canceled -= m_Wrapper.m_GameRunningActionsCallbackInterface.OnForm2;
+                @Form3.started -= m_Wrapper.m_GameRunningActionsCallbackInterface.OnForm3;
+                @Form3.performed -= m_Wrapper.m_GameRunningActionsCallbackInterface.OnForm3;
+                @Form3.canceled -= m_Wrapper.m_GameRunningActionsCallbackInterface.OnForm3;
+                @FormPrev.started -= m_Wrapper.m_GameRunningActionsCallbackInterface.OnFormPrev;
+                @FormPrev.performed -= m_Wrapper.m_GameRunningActionsCallbackInterface.OnFormPrev;
+                @FormPrev.canceled -= m_Wrapper.m_GameRunningActionsCallbackInterface.OnFormPrev;
+                @Plan.started -= m_Wrapper.m_GameRunningActionsCallbackInterface.OnPlan;
+                @Plan.performed -= m_Wrapper.m_GameRunningActionsCallbackInterface.OnPlan;
+                @Plan.canceled -= m_Wrapper.m_GameRunningActionsCallbackInterface.OnPlan;
             }
             m_Wrapper.m_GameRunningActionsCallbackInterface = instance;
             if (instance != null)
@@ -480,6 +605,21 @@ public class @InputControls : IInputActionCollection, IDisposable
                 @Use.started += instance.OnUse;
                 @Use.performed += instance.OnUse;
                 @Use.canceled += instance.OnUse;
+                @Form1.started += instance.OnForm1;
+                @Form1.performed += instance.OnForm1;
+                @Form1.canceled += instance.OnForm1;
+                @Form2.started += instance.OnForm2;
+                @Form2.performed += instance.OnForm2;
+                @Form2.canceled += instance.OnForm2;
+                @Form3.started += instance.OnForm3;
+                @Form3.performed += instance.OnForm3;
+                @Form3.canceled += instance.OnForm3;
+                @FormPrev.started += instance.OnFormPrev;
+                @FormPrev.performed += instance.OnFormPrev;
+                @FormPrev.canceled += instance.OnFormPrev;
+                @Plan.started += instance.OnPlan;
+                @Plan.performed += instance.OnPlan;
+                @Plan.canceled += instance.OnPlan;
             }
         }
     }
@@ -598,6 +738,11 @@ public class @InputControls : IInputActionCollection, IDisposable
         void OnMove(InputAction.CallbackContext context);
         void OnAttack(InputAction.CallbackContext context);
         void OnUse(InputAction.CallbackContext context);
+        void OnForm1(InputAction.CallbackContext context);
+        void OnForm2(InputAction.CallbackContext context);
+        void OnForm3(InputAction.CallbackContext context);
+        void OnFormPrev(InputAction.CallbackContext context);
+        void OnPlan(InputAction.CallbackContext context);
     }
     public interface IGamePlanningActions
     {

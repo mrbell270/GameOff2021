@@ -8,7 +8,7 @@ public class BugGravity : Bug
     {
         bugName = "Gravity Change";
         bugDesc = "Move with no gravity";
-        bugType = EBugType.Gravity;
+        bugType = EBugType.Flying;
         SetState(state);
     }
 }

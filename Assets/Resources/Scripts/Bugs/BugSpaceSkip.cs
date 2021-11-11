@@ -8,7 +8,7 @@ public class BugSpaceSkip : Bug
     {
         bugName = "Skip Space";
         bugDesc = "Move by increment, not physics";
-        bugType = EBugType.Skip;
+        bugType = EBugType.Silent;
         SetState(state);
     }
 }

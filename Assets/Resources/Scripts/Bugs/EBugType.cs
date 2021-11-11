@@ -1,6 +1,6 @@
 public enum EBugType
 {
-    Gravity
-    , Skip
-    , Size
+    Silent
+    , Flying
+    , Small
 }
