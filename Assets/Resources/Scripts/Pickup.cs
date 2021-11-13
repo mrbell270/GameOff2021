@@ -20,7 +20,7 @@ public class Pickup : MonoBehaviour
             pickupDone = true;
             if (collision.CompareTag("Player"))
             {
-                Player.GetInstance().GetPickup(this);
+                //Player.GetInstance().GetPickup(this);
                 SelfDestroy();
             }
             Invoke("ResetPickup", 0.2f);

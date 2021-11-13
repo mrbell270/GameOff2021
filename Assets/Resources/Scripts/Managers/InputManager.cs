@@ -35,7 +35,7 @@ public class InputManager : MonoBehaviour
         _controls.GameRunning.Move.performed += ctx => player.MoveAction(ctx, EActionState.Performed);
         _controls.GameRunning.Move.canceled += ctx => player.MoveAction(ctx, EActionState.Cancelled);
         _controls.GameRunning.Attack.performed += ctx => player.AttackAction();
-        //_controls.GameRunning.Use.performed += ctx => CheckAndStartPlanning();
+        _controls.GameRunning.Use.performed += ctx => player.UseAction();
         _controls.GameRunning.Plan.performed += ctx => CheckAndStartPlanning();
         _controls.GameRunning.Pause.performed += ctx => gm.SetState(EGameState.PauseMenu);
         _controls.GameRunning.Form1.performed += ctx => player.SetForm(0);

@@ -26,6 +26,10 @@ public class Player : MonoBehaviour
     float crouchingError;
     [VerticalGroup("Movement")]
     Vector2 movementVector;
+    [VerticalGroup("Movement")]
+    bool isOnLadder;
+    [VerticalGroup("Movement")]
+    bool canMove = true;
 
     [Header("Planning Mode")]
     public bool isInArea;
@@ -34,6 +38,12 @@ public class Player : MonoBehaviour
     [SerializeField]
     EBugType currentForm;
     EBugType previousForm;
+
+    bool isFormLocked;
+
+    [Header("Silent")]
+    GameObject usable = null;
+    public bool isVisible = true;
 
     public static Player GetInstance()
     {
@@ -55,6 +65,12 @@ public class Player : MonoBehaviour
     {
         isPlaying = false;
         currentForm = EBugType.Silent;
+        currentController = (int)currentForm;
+        foreach(MovementController mc in movementController)
+        {
+            mc.gameObject.SetActive(false);
+        }
+        movementController[currentController].gameObject.SetActive(true);
     }
 
     void ResetGame()
@@ -78,19 +94,9 @@ public class Player : MonoBehaviour
 
     void Move()
     {
-        if (!movementVector.Equals(Vector2.zero))
+        if (canMove)
         {
-            if (currentForm == EBugType.Flying)
-            {
-                movementController[currentController].MoveNoGravity(movementVector);
-            }
-            else
-            {
-                float movement = movementVector.x;
-                bool isJumping = movementVector.y > jumpingError;
-                bool isCrouching = movementVector.y < -crouchingError;
-                movementController[currentController].Move(movement, isCrouching, isJumping);
-            }
+            movementController[currentController].Move(movementVector, currentForm, crouchingError, jumpingError, isOnLadder);
         }
     }
 
@@ -132,73 +138,95 @@ public class Player : MonoBehaviour
 
     // States END
 
-    public void GetPickup(Pickup pickup)
-    {
-        switch (pickup.pickupType)
-        {
-            case (EPickupType.Bug):
-                //BugManager.GetInstance().AddBug(pickup.GetComponent<PickupBug>().bugType);
-                break;
-            case (EPickupType.Slot):
-                //BugManager.GetInstance().AddSlot();
-                break;
-            case (EPickupType.Health):
-                // ADD HP
-                break;
-            default:
-                Debug.Log("Pickup " + pickup.gameObject.name + " not initialized.");
-                break;
-        }
-    }
-
     // Bugs
-
     public void SetForm(int formId)
     {
+        if (isFormLocked || (EBugType)formId == currentForm) return;
+        movementController[currentController].gameObject.SetActive(false);
+        StopForm(currentForm);
         if (formId == -1)
         {
-            // stop current
             EBugType newForm = previousForm;
             previousForm = currentForm;
             currentForm = newForm;
-            // set new
         }
         else
         {
-            // stop current
             previousForm = currentForm;
             currentForm = (EBugType)formId;
-            // set new
         }
+        StartForm(currentForm);
         currentController = (int)currentForm;
-    }
-    public void SetGravityBug(bool enable)
-    {
-        //isFlying = enable;
-        //GetComponent<Rigidbody2D>().gravityScale = isFlying ? 1 : 3;
+        movementController[currentController].gameObject.SetActive(true);
     }
 
+    void StartForm(EBugType form)
+    {
+        switch (form)
+        {
+            case (EBugType.Silent):
+                break;
+            case (EBugType.Flying):
+                GetComponent<Rigidbody2D>().gravityScale = 1;
+                break;
+            case (EBugType.Small):
+                break;
+        }
+    }
+    void StopForm(EBugType form)
+    {
+        switch (form)
+        {
+            case (EBugType.Silent):
+                break;
+            case (EBugType.Flying):
+                GetComponent<Rigidbody2D>().gravityScale = 3;
+                break;
+            case (EBugType.Small):
+                break;
+        }
+    }
     // Bugs END
 
+    // Silent
+    public void UseAction()
+    {
+        if (usable == null || !currentForm.Equals(EBugType.Silent)) return;
+        if (usable.CompareTag("Door"))
+        {
+            isVisible = !isVisible;
+            isFormLocked = !isFormLocked;
+            canMove = !canMove;
+            transform.position = usable.transform.position;
+        }
+    }
+    // Silent END
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Terminal"))
+        if (currentForm.Equals(EBugType.Silent) && collision.CompareTag("Ladder"))
         {
-            //if (BugManager.GetInstance().openedBugs.Count > 0)
-            //{
-            //    isInArea = true;
-            //    collision.GetComponent<BlockedArea>().SetPlayerNear(isInArea);
-            //}
+            isFormLocked = true;
+            isOnLadder = true;
+            GetComponent<Rigidbody2D>().gravityScale = 0;
+        }
+        if (currentForm.Equals(EBugType.Silent) && collision.CompareTag("Door"))
+        {
+            usable = collision.gameObject;
         }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.CompareTag("Terminal"))
+        if (currentForm.Equals(EBugType.Silent) && collision.CompareTag("Ladder"))
         {
-            //    isInArea = false;
-            //    collision.GetComponent<BlockedArea>().SetPlayerNear(isInArea);
+            isFormLocked = false;
+            isOnLadder = false;
+            GetComponent<Rigidbody2D>().gravityScale = 3;
+        }
+        if (currentForm.Equals(EBugType.Silent) && collision.CompareTag("Door"))
+        {
+            usable = null;
         }
     }
 }

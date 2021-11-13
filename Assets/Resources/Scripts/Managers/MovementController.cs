@@ -10,9 +10,11 @@ public class MovementController : MonoBehaviour
 	[SerializeField] private Rigidbody2D rb2d;
 	[SerializeField] private float movementSpeed = 10f;                          
 	[SerializeField] private float jumpForce = 400f;                          
-	[Range(0, 1)] [SerializeField] private float crouchSpeedMultiplier = .36f;          
+	[Range(0, 3)] [SerializeField] private float crouchSpeedMultiplier = .36f;          
 	[Range(0, .3f)] [SerializeField] private float movementSmoothing = .05f;  
-	[SerializeField] private bool airControl = false;                         
+	[SerializeField] private bool airControl = false;
+	[SerializeField] private bool canCrouch = false;
+	[SerializeField] private bool canJump = false;
 	[SerializeField] private LayerMask groundLayers;                          
 	[SerializeField] private Transform feetCheck;                           
 	[SerializeField] private Transform headCheck;                          
@@ -62,74 +64,79 @@ public class MovementController : MonoBehaviour
 	}
 
 
-	public void Move(float move, bool crouch, bool jump)
+	public void Move(Vector2 movement, EBugType form, float crouchError, float jumpError, bool isMovingVertically)
 	{
-		if (!crouch && _wasCrouching)
+		if (form == EBugType.Flying || isMovingVertically)
 		{
-			if (Physics2D.OverlapCircle(headCheck.position, ceilingRadius, groundLayers))
-			{
-				crouch = true;
-			}
-		}
-
-		if (isGrounded || airControl)
-		{
-			if (crouch)
-			{
-				if (!_wasCrouching)
-				{
-					_wasCrouching = true;
-					OnCrouchEvent.Invoke(true);
-				}
-
-				move *= crouchSpeedMultiplier;
-
-				if (crouchDisableCollider != null)
-					crouchDisableCollider.enabled = false;
-			}
-			else
-			{
-				if (crouchDisableCollider != null)
-					crouchDisableCollider.enabled = true;
-
-				if (_wasCrouching)
-				{
-					_wasCrouching = false;
-					OnCrouchEvent.Invoke(false);
-				}
-			}
-
-			Vector3 targetVelocity = new Vector2(move * movementSpeed, rb2d.velocity.y);
+			Vector3 targetVelocity = movement * movementSpeed;
 			rb2d.velocity = Vector3.SmoothDamp(rb2d.velocity, targetVelocity, ref _velocity, movementSmoothing);
 
-			if (move > 0 && !isFacingRight)
+			if (movement.x > 0 && !isFacingRight)
 			{
 				Flip();
 			}
-			else if (move < 0 && isFacingRight)
+			else if (movement.x < 0 && isFacingRight)
 			{
 				Flip();
 			}
 		}
-		if (isGrounded && jump)
+		else
 		{
-			isGrounded = false;
-			rb2d.AddForce(new Vector2(0f, jumpForce));
-		}
-	}
+			float move = movement.x;
+			bool jump = canJump && movement.y > jumpError;
+			bool crouch = canCrouch && movement.y < -crouchError;
+			if (!crouch && _wasCrouching)
+			{
+				if (Physics2D.OverlapCircle(headCheck.position, ceilingRadius, groundLayers))
+				{
+					crouch = true;
+				}
+			}
 
-	public void MoveNoGravity(Vector2 move)
-    {
-		Vector3 targetVelocity = move * movementSpeed;
-		rb2d.velocity = Vector3.SmoothDamp(rb2d.velocity, targetVelocity, ref _velocity, movementSmoothing);
+			if (isGrounded || airControl)
+			{
+				if (crouch)
+				{
+					if (!_wasCrouching)
+					{
+						_wasCrouching = true;
+						OnCrouchEvent.Invoke(true);
+					}
 
-		if (move.x > 0 && !isFacingRight)
-		{
-			Flip();
-		}
-		else if (move.x < 0 && isFacingRight)
-		{
-			Flip();
+					move *= crouchSpeedMultiplier;
+
+					if (crouchDisableCollider != null)
+						crouchDisableCollider.enabled = false;
+				}
+				else
+				{
+					if (crouchDisableCollider != null)
+						crouchDisableCollider.enabled = true;
+
+					if (_wasCrouching)
+					{
+						_wasCrouching = false;
+						OnCrouchEvent.Invoke(false);
+					}
+				}
+
+				Vector3 targetVelocity = new Vector2(move * movementSpeed, rb2d.velocity.y);
+				rb2d.velocity = Vector3.SmoothDamp(rb2d.velocity, targetVelocity, ref _velocity, movementSmoothing);
+
+				if (move > 0 && !isFacingRight)
+				{
+					Flip();
+				}
+				else if (move < 0 && isFacingRight)
+				{
+					Flip();
+				}
+			}
+			if (isGrounded && jump)
+			{
+				isGrounded = false;
+				rb2d.AddForce(new Vector2(0f, jumpForce));
+			}
 		}
 	}
 
