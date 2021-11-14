@@ -63,7 +63,7 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        isPlaying = false;
+        isPlaying = true;
         currentForm = EBugType.Silent;
         currentController = (int)currentForm;
         foreach(CharMovementController mc in movementController)
@@ -104,16 +104,9 @@ public class Player : MonoBehaviour
     {
     }
 
-    public void MoveAction(UnityEngine.InputSystem.InputAction.CallbackContext ctx, EActionState state)
+    public void MoveAction(Vector2 inputVector)
     {
-        if (state.Equals(EActionState.Started) || state.Equals(EActionState.Performed))
-        {
-            movementVector = ctx.ReadValue<Vector2>();
-        }
-        else if (state.Equals(EActionState.Cancelled))
-        {
-            movementVector = Vector2.zero;
-        }
+        movementVector = inputVector;
     }
 
     // States

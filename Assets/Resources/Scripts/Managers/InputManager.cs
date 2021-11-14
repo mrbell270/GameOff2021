@@ -32,8 +32,8 @@ public class InputManager : MonoBehaviour
 
         _controls = new InputControls();
 
-        _controls.GameRunning.Move.performed += ctx => player.MoveAction(ctx, EActionState.Performed);
-        _controls.GameRunning.Move.canceled += ctx => player.MoveAction(ctx, EActionState.Cancelled);
+        _controls.GameRunning.Move.performed += ctx => player.MoveAction(ctx.ReadValue<Vector2>());
+        _controls.GameRunning.Move.canceled += ctx => player.MoveAction(Vector2.zero);
         _controls.GameRunning.Attack.performed += ctx => player.AttackAction();
         _controls.GameRunning.Use.performed += ctx => player.UseAction();
         _controls.GameRunning.Plan.performed += ctx => CheckAndStartPlanning();
@@ -43,9 +43,9 @@ public class InputManager : MonoBehaviour
         _controls.GameRunning.Form3.performed += ctx => player.SetForm(2);
         _controls.GameRunning.FormPrev.performed += ctx => player.SetForm(-1);
 
-        _controls.GamePlanning.Back.performed += ctx => gm.SetState(EGameState.GameRunning);
-        _controls.GamePlanning.Move.performed += ctx => ui.PlanningChangeSelectedEntry(-Math.Sign(ctx.ReadValue<Vector2>().y));
-        _controls.GamePlanning.Use.performed += ctx => ui.PlanningChangeEntryState();
+        //_controls.GamePlanning.Back.performed += ctx => gm.SetState(EGameState.GameRunning);
+        //_controls.GamePlanning.Move.performed += ctx => ui.PlanningChangeSelectedEntry(-Math.Sign(ctx.ReadValue<Vector2>().y));
+        //_controls.GamePlanning.Use.performed += ctx => ui.PlanningChangeEntryState();
     }
     // Start is called before the first frame update
     void Start()
@@ -53,6 +53,8 @@ public class InputManager : MonoBehaviour
         gm = GameStateManager.GetInstance();
         ui = UIManager.GetInstance();
         player = Player.GetInstance();
+
+        _controls.GameRunning.Enable();
     }
 
     // Update is called once per frame

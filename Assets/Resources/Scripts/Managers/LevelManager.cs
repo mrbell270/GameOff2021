@@ -6,13 +6,18 @@ public class LevelManager : MonoBehaviour
 {
     private static LevelManager instance;
 
-    public int curLevel;
-    public int openedLevels;
-    public int totalLevels;
-    [HideInInspector]
-    public int offsetPlayable;
-    public bool isAutosave = true;
-    [SerializeField] private Animator fadeAnimator;
+    [SerializeField]
+    int curLevel;
+    [SerializeField]
+    int openedLevels;
+    [SerializeField]
+    int totalLevels;
+    [SerializeField]
+    int offsetPlayable = 1;
+    [SerializeField]
+    bool isAutosave = true;
+    //[SerializeField]
+    //Animator fadeAnimator;
     public static LevelManager GetInstance()
     {
         return instance;
@@ -33,7 +38,7 @@ public class LevelManager : MonoBehaviour
 
     IEnumerator LevelLoadingInitial(int loadIdx)
     {
-        fadeAnimator.SetBool("Faded", true);
+        //fadeAnimator.SetBool("Faded", true);
         if (SceneManager.sceneCount < 2)
         {
             SceneManager.LoadSceneAsync(loadIdx, LoadSceneMode.Additive);
@@ -47,7 +52,7 @@ public class LevelManager : MonoBehaviour
         curLevel = SceneManager.GetActiveScene().buildIndex - offsetPlayable;
         openedLevels = PlayerPrefs.GetInt("OpenedLevels", 1);
         totalLevels = SceneManager.sceneCountInBuildSettings - offsetPlayable;
-        fadeAnimator.SetBool("Faded", false);
+        //fadeAnimator.SetBool("Faded", false);
     }
 
     public void LoadNextLevel()
@@ -90,11 +95,11 @@ public class LevelManager : MonoBehaviour
         {
             //Player.GetInstance().Animate();
         }
-        fadeAnimator.SetBool("Faded", true);
+        //fadeAnimator.SetBool("Faded", true);
         yield return new WaitForSeconds(1.5f);
         SceneManager.UnloadSceneAsync(unloadIdx);
         SceneManager.LoadScene(loadIdx, LoadSceneMode.Additive);
         //UIManager.GetInstance().StartScreenSetUp(true);
-        fadeAnimator.SetBool("Faded", false);
+        //fadeAnimator.SetBool("Faded", false);
     }
 }
