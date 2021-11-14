@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using Sirenix.OdinInspector;
 
-public class MovementController : MonoBehaviour
+public class CharMovementController : MonoBehaviour
 {
 	[VerticalGroup("Movement")]
 	[SerializeField] private Rigidbody2D rb2d;
@@ -83,7 +83,6 @@ public class MovementController : MonoBehaviour
 		else
 		{
 			float move = movement.x;
-			bool jump = canJump && movement.y > jumpError;
 			bool crouch = canCrouch && movement.y < -crouchError;
 			if (!crouch && _wasCrouching)
 			{
@@ -92,6 +91,7 @@ public class MovementController : MonoBehaviour
 					crouch = true;
 				}
 			}
+			bool jump = !crouch && canJump && movement.y > jumpError;
 
 			if (isGrounded || airControl)
 			{

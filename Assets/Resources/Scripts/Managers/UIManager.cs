@@ -36,7 +36,7 @@ public class UIManager : MonoBehaviour
 
     [Header("Sound")]
     [SerializeField]
-    AudioMixer audioMixer;
+    static AudioMixer audioMixer;
 
     void Awake()
     {

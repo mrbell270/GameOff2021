@@ -14,7 +14,7 @@ public class Player : MonoBehaviour
     [Header("Movement Inner Variables")]
     [VerticalGroup("Movement")]
     [SerializeField]
-    List<MovementController> movementController;
+    List<CharMovementController> movementController;
     [VerticalGroup("Movement")]
     [SerializeField]
     int currentController;
@@ -66,7 +66,7 @@ public class Player : MonoBehaviour
         isPlaying = false;
         currentForm = EBugType.Silent;
         currentController = (int)currentForm;
-        foreach(MovementController mc in movementController)
+        foreach(CharMovementController mc in movementController)
         {
             mc.gameObject.SetActive(false);
         }
@@ -136,6 +136,12 @@ public class Player : MonoBehaviour
         Time.timeScale = 0;
     }
 
+    public void SetDialog()
+    {
+        isPlaying = false;
+        Time.timeScale = 0;
+    }
+
     // States END
 
     // Bugs
@@ -194,6 +200,7 @@ public class Player : MonoBehaviour
         if (usable == null || !currentForm.Equals(EBugType.Silent)) return;
         if (usable.CompareTag("Door"))
         {
+            movementVector = Vector2.zero;
             isVisible = !isVisible;
             isFormLocked = !isFormLocked;
             canMove = !canMove;
