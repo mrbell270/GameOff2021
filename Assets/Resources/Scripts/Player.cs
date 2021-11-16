@@ -14,7 +14,7 @@ public class Player : MonoBehaviour
     [Header("Movement Inner Variables")]
     [VerticalGroup("Movement")]
     [SerializeField]
-    List<CharMovementController> movementController;
+    List<MovementController> movementController;
     [VerticalGroup("Movement")]
     [SerializeField]
     int currentController;
@@ -66,7 +66,7 @@ public class Player : MonoBehaviour
         isPlaying = true;
         currentForm = EBugType.Silent;
         currentController = (int)currentForm;
-        foreach(CharMovementController mc in movementController)
+        foreach(MovementController mc in movementController)
         {
             mc.gameObject.SetActive(false);
         }
@@ -198,6 +198,11 @@ public class Player : MonoBehaviour
             isFormLocked = !isFormLocked;
             canMove = !canMove;
             transform.position = usable.transform.position;
+            GetComponent<Rigidbody2D>().gravityScale = canMove ? 3 : 0;
+        }
+        if (usable.CompareTag("Terminal"))
+        {
+            usable.GetComponent<Terminal>().Use();
         }
     }
     // Silent END
@@ -210,7 +215,7 @@ public class Player : MonoBehaviour
             isOnLadder = true;
             GetComponent<Rigidbody2D>().gravityScale = 0;
         }
-        if (currentForm.Equals(EBugType.Silent) && collision.CompareTag("Door"))
+        if (currentForm.Equals(EBugType.Silent) && (collision.CompareTag("Door") || collision.CompareTag("Terminal")))
         {
             usable = collision.gameObject;
         }
@@ -224,7 +229,7 @@ public class Player : MonoBehaviour
             isOnLadder = false;
             GetComponent<Rigidbody2D>().gravityScale = 3;
         }
-        if (currentForm.Equals(EBugType.Silent) && collision.CompareTag("Door"))
+        if ((collision.CompareTag("Terminal")) || (currentForm.Equals(EBugType.Silent) && collision.CompareTag("Door")))
         {
             usable = null;
         }

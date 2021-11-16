@@ -1,46 +1,73 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Sirenix.OdinInspector;
+using System;
+using UnityEngine.Events;
 
 public class Guard : MonoBehaviour
 {
+    [FoldoutGroup("Movement")]
+    [SerializeField]
+    GuardController controller;
+    [FoldoutGroup("Movement")]
+    [SerializeField]
+    float waitTimer = 1.5f;
+    [FoldoutGroup("Movement")]
+    [SerializeField]
+    float pointError = 0.5f;
+    [FoldoutGroup("Movement")]
+    int currentPoint = 0;
+    [FoldoutGroup("Movement")]
+    bool isWaiting = false;
+    [FoldoutGroup("Movement")]
     [SerializeField]
     List<Vector2> trajectory;
 
+    [FoldoutGroup("Guarding")]
     [SerializeField]
-    GameObject fov;
+    GameObject raysVisuals;
+    [FoldoutGroup("Guarding")]
     [SerializeField]
     LayerMask playerLayer;
-
-    bool isLookingRight = true;
-    
-    [SerializeField]
-    [Range(2f, 6f)]
-    float visionRadius = 2f;
-    [SerializeField]
-    float minVisionRadius = 2f;
-    [SerializeField]
-    float maxVisionRadius = 6f;
-    [SerializeField]
-    float suspicionIncreaseTime = 2f;
-    [SerializeField]
-    float suspicionDecreaseTime = 2f;
-    [SerializeField]
-    float alarmTimeout = 3f;
-
+    [FoldoutGroup("Guarding")]
     [SerializeField]
     List<Vector2> rays;
 
+    [FoldoutGroup("Guarding")]
+    [SerializeField]
+    [Range(2f, 6f)]
+    float visionRadius = 2f;
+    [FoldoutGroup("Guarding")]
+    [SerializeField]
+    float minVisionRadius = 2f;
+    [FoldoutGroup("Guarding")]
+    [SerializeField]
+    float maxVisionRadius = 6f;
+    [FoldoutGroup("Guarding")]
+    [SerializeField]
+    float suspicionIncreaseTime = 2f;
+    [FoldoutGroup("Guarding")]
+    [SerializeField]
+    float suspicionDecreaseTime = 2f;
+    [FoldoutGroup("Guarding")]
+    [SerializeField]
+    float alarmTimeout = 3f;
+
+    //UnityAction WaitAction;
 
 
     void Start()
     {
+        controller = GetComponent<GuardController>();
+        //WaitAction += Wait;
+        //controller.OnTurnEvent.AddListener(WaitAction);
     }
 
 
     void Update()
     {
-        fov.transform.localScale = Vector3.one * (visionRadius / minVisionRadius);
+        raysVisuals.transform.localScale = Vector3.one * (visionRadius / minVisionRadius);
     }
 
     private void FixedUpdate()
@@ -49,22 +76,37 @@ public class Guard : MonoBehaviour
         Move();
     }
 
-    void Move()
-    {
-        
-    }
-
     void LookForPlayer()
     {
         foreach (Vector2 ray in rays)
         {
-            RaycastHit2D hit = Physics2D.Raycast(fov.transform.position, ray, visionRadius, playerLayer);
+            RaycastHit2D hit = Physics2D.Raycast(raysVisuals.transform.position, ray, visionRadius, playerLayer);
             if (hit.collider != null)
             {
                 PlayerHit();
                 break;
             }
         }
+    }
+
+    void Move()
+    {
+        if (!isWaiting)
+        {
+            controller.SwitchMovement(true, 0);
+        }
+    }
+
+     public void Wait()
+    {
+        isWaiting = true;
+        StartCoroutine(WaitForTimer(waitTimer));
+    }
+
+    IEnumerator WaitForTimer(float waitTimer)
+    {
+        yield return new WaitForSeconds(waitTimer);
+        isWaiting = false;
     }
 
     void PlayerHit()

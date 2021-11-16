@@ -12,7 +12,6 @@ public class InputManager : MonoBehaviour
 
     [Header("Recievers")]
     Player player;
-    GameStateManager gm;
     UIManager ui;
 
     public static InputManager GetInstance()
@@ -37,7 +36,7 @@ public class InputManager : MonoBehaviour
         _controls.GameRunning.Attack.performed += ctx => player.AttackAction();
         _controls.GameRunning.Use.performed += ctx => player.UseAction();
         _controls.GameRunning.Plan.performed += ctx => CheckAndStartPlanning();
-        _controls.GameRunning.Pause.performed += ctx => gm.SetState(EGameState.PauseMenu);
+        _controls.GameRunning.Pause.performed += ctx => Debug.Log("PAUSE");
         _controls.GameRunning.Form1.performed += ctx => player.SetForm(0);
         _controls.GameRunning.Form2.performed += ctx => player.SetForm(1);
         _controls.GameRunning.Form3.performed += ctx => player.SetForm(2);
@@ -50,7 +49,6 @@ public class InputManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        gm = GameStateManager.GetInstance();
         ui = UIManager.GetInstance();
         player = Player.GetInstance();
 
@@ -91,7 +89,7 @@ public class InputManager : MonoBehaviour
     {
         if (!player.isInArea)
         {
-            gm.SetState(EGameState.GamePlanning);
+            //gm.SetState(EGameState.GamePlanning);
         }
     }
 

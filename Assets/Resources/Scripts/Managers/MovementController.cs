@@ -4,27 +4,41 @@ using UnityEngine;
 using UnityEngine.Events;
 using Sirenix.OdinInspector;
 
-public class CharMovementController : MonoBehaviour
+public class MovementController : MonoBehaviour
 {
 	[VerticalGroup("Movement")]
-	[SerializeField] private Rigidbody2D rb2d;
-	[SerializeField] private float movementSpeed = 10f;                          
-	[SerializeField] private float jumpForce = 400f;                          
-	[Range(0, 3)] [SerializeField] private float crouchSpeedMultiplier = .36f;          
-	[Range(0, .3f)] [SerializeField] private float movementSmoothing = .05f;  
-	[SerializeField] private bool airControl = false;
-	[SerializeField] private bool canCrouch = false;
-	[SerializeField] private bool canJump = false;
-	[SerializeField] private LayerMask groundLayers;                          
-	[SerializeField] private Transform feetCheck;                           
-	[SerializeField] private Transform headCheck;                          
-	[SerializeField] private Collider2D crouchDisableCollider;                
+	[SerializeField]
+	Rigidbody2D rb2d;
+	[SerializeField]
+	float movementSpeed = 10f;                          
+	[SerializeField]
+	float jumpForce = 400f;                          
+	[SerializeField]
+	[Range(0, 3)] 
+	float crouchSpeedMultiplier = .36f;          
+	[SerializeField]
+	[Range(0, .3f)]
+	float movementSmoothing = .05f;  
+	[SerializeField]
+	bool airControl = false;
+	[SerializeField]
+	bool canCrouch = false;
+	[SerializeField]
+	bool canJump = false;
+	[SerializeField]
+	LayerMask groundLayers;                          
+	[SerializeField]
+	Transform feetCheck;                           
+	[SerializeField]
+	Transform headCheck;                          
+	[SerializeField]
+	Collider2D crouchDisableCollider;                
 
 	const float groundedRadius = .2f;
-	private bool isGrounded;
+	bool isGrounded;
 	const float ceilingRadius = .2f;
-	private bool isFacingRight = true;
-	private Vector3 _velocity = Vector3.zero;
+	bool isFacingRight = true;
+	Vector3 _velocity = Vector3.zero;
 
 	[Header("Events")]
 	[Space]
@@ -35,7 +49,7 @@ public class CharMovementController : MonoBehaviour
 	public class BoolEvent : UnityEvent<bool> { }
 
 	public BoolEvent OnCrouchEvent;
-	private bool _wasCrouching = false;
+	bool _wasCrouching = false;
 
 	private void Awake()
 	{
