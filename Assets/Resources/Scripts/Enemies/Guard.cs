@@ -7,22 +7,15 @@ using UnityEngine.Events;
 
 public class Guard : MonoBehaviour
 {
-    [FoldoutGroup("Movement")]
+    [VerticalGroup("Movement")]
     [SerializeField]
     GuardController controller;
-    [FoldoutGroup("Movement")]
+    [VerticalGroup("Movement")]
     [SerializeField]
-    float waitTimer = 1.5f;
-    [FoldoutGroup("Movement")]
+    bool isFacingRight = true;
+    [VerticalGroup("Movement")]
     [SerializeField]
-    float pointError = 0.5f;
-    [FoldoutGroup("Movement")]
-    int currentPoint = 0;
-    [FoldoutGroup("Movement")]
-    bool isWaiting = false;
-    [FoldoutGroup("Movement")]
-    [SerializeField]
-    List<Vector2> trajectory;
+    bool flipBeforeWait = true;
 
     [FoldoutGroup("Guarding")]
     [SerializeField]
@@ -33,7 +26,6 @@ public class Guard : MonoBehaviour
     [FoldoutGroup("Guarding")]
     [SerializeField]
     List<Vector2> rays;
-
     [FoldoutGroup("Guarding")]
     [SerializeField]
     [Range(2f, 6f)]
@@ -46,7 +38,7 @@ public class Guard : MonoBehaviour
     float maxVisionRadius = 6f;
     [FoldoutGroup("Guarding")]
     [SerializeField]
-    float suspicionIncreaseTime = 2f;
+    float suspicionIncreaseTime = 0.2f;
     [FoldoutGroup("Guarding")]
     [SerializeField]
     float suspicionDecreaseTime = 2f;
@@ -73,7 +65,6 @@ public class Guard : MonoBehaviour
     private void FixedUpdate()
     {
         LookForPlayer();
-        Move();
     }
 
     void LookForPlayer()
@@ -89,38 +80,8 @@ public class Guard : MonoBehaviour
         }
     }
 
-    void Move()
-    {
-        if (!isWaiting)
-        {
-            controller.SwitchMovement(true, 0);
-        }
-    }
-
-     public void Wait()
-    {
-        isWaiting = true;
-        StartCoroutine(WaitForTimer(waitTimer));
-    }
-
-    IEnumerator WaitForTimer(float waitTimer)
-    {
-        yield return new WaitForSeconds(waitTimer);
-        isWaiting = false;
-    }
-
     void PlayerHit()
     {
         Debug.Log("Hit");
-    }
-
-
-    void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.blue;
-        for (int i = 0; i < trajectory.Count; i++)
-        {
-            Gizmos.DrawLine(((i==0) ? (Vector2)transform.position : trajectory[i-1]), trajectory[i]);
-        }
     }
 }

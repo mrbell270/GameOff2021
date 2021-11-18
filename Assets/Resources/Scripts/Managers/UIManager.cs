@@ -68,24 +68,24 @@ public class UIManager : MonoBehaviour
         eventSystem = EventSystem.current;
 
         // Settings Start()
-        resolutions = Screen.resolutions;
-        List<string> resolutionsList = new List<string>();
-        int currentResolutionIdx = 0;
-        foreach (Resolution res in resolutions)
-        {
-            resolutionsList.Add(res.width + "X" + res.height);
-            if (res.height == Screen.height
-                && res.width == Screen.width)
-            {
-                currentResolutionIdx = resolutionsList.Count - 1;
-            }
-        }
-        resolutionDropdown.ClearOptions();
-        resolutionDropdown.AddOptions(resolutionsList);
-        resolutionDropdown.value = currentResolutionIdx;
-        resolutionDropdown.RefreshShownValue();
+        //resolutions = Screen.resolutions;
+        //List<string> resolutionsList = new List<string>();
+        //int currentResolutionIdx = 0;
+        //foreach (Resolution res in resolutions)
+        //{
+        //    resolutionsList.Add(res.width + "X" + res.height);
+        //    if (res.height == Screen.height
+        //        && res.width == Screen.width)
+        //    {
+        //        currentResolutionIdx = resolutionsList.Count - 1;
+        //    }
+        //}
+        //resolutionDropdown.ClearOptions();
+        //resolutionDropdown.AddOptions(resolutionsList);
+        //resolutionDropdown.value = currentResolutionIdx;
+        //resolutionDropdown.RefreshShownValue();
 
-        fullscreenToggle.isOn = Screen.fullScreen;
+        //fullscreenToggle.isOn = Screen.fullScreen;
     }
 
     void Update()
