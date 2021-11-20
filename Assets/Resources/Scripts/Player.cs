@@ -45,6 +45,11 @@ public class Player : MonoBehaviour
     GameObject usable = null;
     public bool isVisible = true;
 
+    [Header("Visuals")]
+    Animator morphAnimator;
+    Animator currentAnimator;
+
+
     public static Player GetInstance()
     {
         return instance;
@@ -63,6 +68,7 @@ public class Player : MonoBehaviour
 
     void Start()
     {
+        morphAnimator = GetComponent<Animator>();
         isPlaying = true;
         currentForm = EBugType.Silent;
         currentController = (int)currentForm;
@@ -70,6 +76,7 @@ public class Player : MonoBehaviour
         {
             mc.gameObject.SetActive(false);
         }
+        currentAnimator = movementController[currentController].gameObject.GetComponent<Animator>();
         movementController[currentController].gameObject.SetActive(true);
     }
 
@@ -98,10 +105,6 @@ public class Player : MonoBehaviour
         {
             movementController[currentController].Move(movementVector, currentForm, crouchingError, jumpingError, isOnLadder);
         }
-    }
-
-    public void AttackAction()
-    {
     }
 
     public void MoveAction(Vector2 inputVector)
@@ -141,6 +144,7 @@ public class Player : MonoBehaviour
     public void SetForm(int formId)
     {
         if (isFormLocked || (EBugType)formId == currentForm) return;
+        morphAnimator.SetTrigger("Morph");
         movementController[currentController].gameObject.SetActive(false);
         StopForm(currentForm);
         if (formId == -1)
@@ -156,6 +160,7 @@ public class Player : MonoBehaviour
         }
         StartForm(currentForm);
         currentController = (int)currentForm;
+        currentAnimator = movementController[currentController].gameObject.GetComponent<Animator>();
         movementController[currentController].gameObject.SetActive(true);
     }
 

@@ -33,7 +33,6 @@ public class InputManager : MonoBehaviour
 
         _controls.GameRunning.Move.performed += ctx => player.MoveAction(ctx.ReadValue<Vector2>());
         _controls.GameRunning.Move.canceled += ctx => player.MoveAction(Vector2.zero);
-        _controls.GameRunning.Attack.performed += ctx => player.AttackAction();
         _controls.GameRunning.Use.performed += ctx => player.UseAction();
         _controls.GameRunning.Plan.performed += ctx => CheckAndStartPlanning();
         _controls.GameRunning.Pause.performed += ctx => Debug.Log("PAUSE");
