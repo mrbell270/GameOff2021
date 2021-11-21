@@ -29,4 +29,12 @@ public class Terminal : MonoBehaviour
             activator.SetState(terminalState);
         }
     }
+
+    public void ShowLines(bool enabled)
+    {
+        foreach(Activator activator in activators)
+        {
+            activator.ShowLine(transform.position, enabled);
+        }
+    }
 }

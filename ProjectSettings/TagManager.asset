@@ -8,6 +8,7 @@ TagManager:
   - Ladder
   - Door
   - Spawn
+  - Trigger
   layers:
   - Default
   - TransparentFX
@@ -22,7 +23,7 @@ TagManager:
   - Door
   - Terminal
   - Enemy
-  - 
+  - Trigger
   - 
   - 
   - 

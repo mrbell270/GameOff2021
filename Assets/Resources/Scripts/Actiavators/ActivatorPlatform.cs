@@ -31,6 +31,7 @@ public class ActivatorPlatform : Activator
         currentPosition = -1;
         isBusy = false;
         isInit = true;
+        lr = GetComponent<LineRenderer>();
     }
 
     private void Update()

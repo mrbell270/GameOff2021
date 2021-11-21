@@ -5,7 +5,7 @@ using Sirenix.OdinInspector;
 using UnityEngine.UI;
 using TMPro;
 
-public class Player : MonoBehaviour
+public class Player : SerializedMonoBehaviour
 {
     [Header("Essentials")]
     static Player instance;
@@ -48,6 +48,9 @@ public class Player : MonoBehaviour
     [Header("Visuals")]
     Animator morphAnimator;
     Animator currentAnimator;
+    [SerializeField]
+    [DictionaryDrawerSettings(DisplayMode = DictionaryDisplayOptions.Foldout)]
+    Dictionary<ETriggerType, GameObject> helps = new Dictionary<ETriggerType, GameObject>();
 
 
     public static Player GetInstance()
@@ -94,7 +97,12 @@ public class Player : MonoBehaviour
                 currentAnimator.SetFloat("HorizontalSpeed", Mathf.Abs(velocity.x));
                 currentAnimator.SetFloat("VerticalSpeed", velocity.y);
                 currentAnimator.SetBool("isGrounded", movementController[currentController].isGrounded);
-                //currentAnimator.SetTrigger("Crouched");
+            }
+            else if (currentForm.Equals(EBugType.Silent))
+            {
+                currentAnimator.SetBool("isMoving", movementVector.magnitude > 0.05);
+                currentAnimator.SetBool("isOnLadder", isOnLadder);
+                currentAnimator.SetBool("isGrounded", movementController[currentController].isGrounded);
             }
         }
     }
@@ -148,14 +156,7 @@ public class Player : MonoBehaviour
 
     public void SetCrouch(bool isCrouch)
     {
-        if (isCrouch)
-        {
-            currentAnimator.SetTrigger("Crouched");
-        }
-        else
-        {
-            currentAnimator.SetTrigger("Uncrouched");
-        }
+        currentAnimator.SetTrigger(isCrouch ? "Crouched" : "Uncrouched");
     }
 
     // States END
@@ -219,7 +220,9 @@ public class Player : MonoBehaviour
         if (usable.CompareTag("Door"))
         {
             movementVector = Vector2.zero;
+            GetComponent<Rigidbody2D>().velocity = Vector2.zero;
             isVisible = !isVisible;
+            currentAnimator.SetTrigger(isVisible ? "Unhide" : "Hide");
             isFormLocked = !isFormLocked;
             canMove = !canMove;
             transform.position = usable.transform.position;
@@ -232,31 +235,87 @@ public class Player : MonoBehaviour
     }
     // Silent END
 
+    // Triggers
+    void SetTrigger(Trigger trigger, bool enabled=true)
+    {
+        ETriggerType type = trigger.type;
+        switch (type)
+        {
+            case (ETriggerType.LevelStart):
+                trigger.CloseStartDoor();
+                break;
+            case (ETriggerType.LevelEnd):
+                // todo
+                break;
+            case (ETriggerType.Form1):
+                helps[type].SetActive(enabled && 0 != (int)currentForm);
+                break;
+            case (ETriggerType.Form2):
+                helps[type].SetActive(enabled && 1 != (int)currentForm);
+                break;
+            case (ETriggerType.Form3):
+                helps[type].SetActive(enabled && 2 != (int)currentForm);
+                break;
+            case (ETriggerType.Usable):
+                helps[type].SetActive(enabled);
+                helps[ETriggerType.Form1].SetActive(enabled && 0 != (int)currentForm);
+                break;
+            case (ETriggerType.Move):
+                helps[type].SetActive(enabled);
+                break;
+            default:
+                break;
+        }
+    }
+
+    // Triggers END
+
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (collision.CompareTag("Trigger"))
+        {
+            SetTrigger(collision.GetComponent<Trigger>(), true);
+        }
         if (currentForm.Equals(EBugType.Silent) && collision.CompareTag("Ladder"))
         {
             isFormLocked = true;
             isOnLadder = true;
             GetComponent<Rigidbody2D>().gravityScale = 0;
         }
-        if (currentForm.Equals(EBugType.Silent) && (collision.CompareTag("Door") || collision.CompareTag("Terminal")))
+        if (collision.CompareTag("Door"))
         {
             usable = collision.gameObject;
+        }
+        if (collision.CompareTag("Terminal"))
+        {
+            usable = collision.gameObject;
+            SetTrigger(collision.GetComponent<Trigger>(), true);
+            collision.gameObject.GetComponent<Terminal>().ShowLines(true);
         }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
+        if (collision.CompareTag("Trigger"))
+        {
+            SetTrigger(collision.GetComponent<Trigger>(), false);
+        }
         if (currentForm.Equals(EBugType.Silent) && collision.CompareTag("Ladder"))
         {
             isFormLocked = false;
             isOnLadder = false;
             GetComponent<Rigidbody2D>().gravityScale = 3;
         }
-        if ((collision.CompareTag("Terminal")) || (currentForm.Equals(EBugType.Silent) && collision.CompareTag("Door")))
+        if (collision.CompareTag("Door"))
         {
             usable = null;
+        }
+        if (collision.CompareTag("Terminal"))
+        {
+            usable = null;
+            SetTrigger(collision.GetComponent<Trigger>(), false);
+            collision.gameObject.GetComponent<Terminal>().ShowLines(false);
         }
     }
 }

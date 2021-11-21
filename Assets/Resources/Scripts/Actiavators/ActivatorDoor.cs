@@ -13,27 +13,28 @@ public class ActivatorDoor : Activator
     [Range(0.05f, 3f)]
     float closingTimer = 0.2f;
     Vector3 standartScale;
+    bool isClosed = true;
 
     void Awake()
     {
-        //standartScale = transform.localScale;
-        standartScale = new Vector3(1, 4, 1);
+        lr = GetComponent<LineRenderer>();
+        standartScale = new Vector3(1, 1, 1);
+        ChangeState(activatorState);
     }
 
     public override void SetState(EActivatorState terminalState, bool verbose = false)
     {
         activatorState = isReversed ? (EActivatorState)(((int)terminalState + 1) % 2) : terminalState;
-        Debug.Log("Door " + gameObject.name + " " + activatorState.ToString());
         ChangeState(activatorState);
     }
 
     void ChangeState(EActivatorState terminalState)
     {
-        if (terminalState.Equals(EActivatorState.Active))
+        if (terminalState.Equals(EActivatorState.Active) && isClosed)
         {
             StartCoroutine(OpenDoor(openningTimer));
         }
-        else
+        else if(terminalState.Equals(EActivatorState.Inactive) && !isClosed)
         {
             StartCoroutine(CloseDoor(closingTimer));
         }
