@@ -35,7 +35,7 @@ public class MovementController : MonoBehaviour
 	Collider2D crouchDisableCollider;                
 
 	const float groundedRadius = .2f;
-	bool isGrounded;
+	public bool isGrounded;
 	const float ceilingRadius = .2f;
 	bool isFacingRight = true;
 	Vector3 _velocity = Vector3.zero;

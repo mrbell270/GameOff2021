@@ -88,6 +88,14 @@ public class Player : MonoBehaviour
     {
         if (isPlaying)
         {
+            if (currentForm.Equals(EBugType.Small))
+            {
+                Vector2 velocity = GetComponent<Rigidbody2D>().velocity;
+                currentAnimator.SetFloat("HorizontalSpeed", Mathf.Abs(velocity.x));
+                currentAnimator.SetFloat("VerticalSpeed", velocity.y);
+                currentAnimator.SetBool("isGrounded", movementController[currentController].isGrounded);
+                //currentAnimator.SetTrigger("Crouched");
+            }
         }
     }
     
@@ -136,6 +144,18 @@ public class Player : MonoBehaviour
     {
         isPlaying = false;
         Time.timeScale = 0;
+    }
+
+    public void SetCrouch(bool isCrouch)
+    {
+        if (isCrouch)
+        {
+            currentAnimator.SetTrigger("Crouched");
+        }
+        else
+        {
+            currentAnimator.SetTrigger("Uncrouched");
+        }
     }
 
     // States END

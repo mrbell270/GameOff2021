@@ -15,6 +15,7 @@ public class ActivatorPlatform : Activator
     List<Vector2> trajectory;
     int currentPosition;
     
+    bool isInit = false;
     bool isBusy = false;
     Rigidbody2D rb2d;
     Vector3 _velocity = Vector3.zero;
@@ -27,13 +28,14 @@ public class ActivatorPlatform : Activator
         {
             trajectory.Add(transform.position);
         }
-        currentPosition = 0;
+        currentPosition = -1;
         isBusy = false;
+        isInit = true;
     }
 
     private void Update()
     {
-        MoveLoop();
+        if (isInit) MoveLoop();
     }
 
     public override void SetState(EActivatorState terminalState, bool verbose = false)
@@ -49,7 +51,7 @@ public class ActivatorPlatform : Activator
     {
         if (!isBusy && activatorState.Equals(EActivatorState.Active))
         {
-            MoveToNextPoint();
+            StartCoroutine(MoveToNextPoint());
         }
     }
 
@@ -62,18 +64,19 @@ public class ActivatorPlatform : Activator
         {
             currentPosition -= trajectory.Count;
         }
-        while (isMoving && activatorState.Equals(EActivatorState.Active))
+        while (isMoving && (isOneWay || activatorState.Equals(EActivatorState.Active)))
         {
             Vector2 direction = trajectory[currentPosition] - (Vector2)transform.position;
             Vector3 targetVelocity = direction.normalized * movementSpeed;
             rb2d.velocity = Vector3.SmoothDamp(rb2d.velocity, targetVelocity, ref _velocity, movementSmoothing);
             if (direction.sqrMagnitude <= 0.0001)
             {
+                rb2d.velocity = Vector3.zero;
                 isMoving = false;
             }
             yield return null;
         }
-        WaitFor();
+        StartCoroutine(WaitFor());
     }
 
     IEnumerator WaitFor()
