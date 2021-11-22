@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using Sirenix.OdinInspector;
+using System.Linq;
 
 public class MovementController : MonoBehaviour
 {
@@ -66,14 +67,10 @@ public class MovementController : MonoBehaviour
 		isGrounded = false;
 
 		Collider2D[] colliders = Physics2D.OverlapCircleAll(feetCheck.position, groundedRadius, groundLayers);
-		for (int i = 0; i < colliders.Length; i++)
+		isGrounded = colliders.Count(x => x.gameObject != gameObject) > 0;
+		if (isGrounded && !wasGrounded)
 		{
-			if (colliders[i].gameObject != gameObject)
-			{
-				isGrounded = true;
-				if (!wasGrounded)
-					OnLandEvent.Invoke();
-			}
+			OnLandEvent.Invoke();
 		}
 	}
 

@@ -49,6 +49,7 @@ public class ActivatorDoor : Activator
             transform.localScale = Vector3.Lerp(standartScale, Vector3.zero, (timeElapsed/timeToOpen));
             yield return null;
         }
+        isClosed = false;
     }
 
     IEnumerator CloseDoor(float timeToClose)
@@ -60,5 +61,6 @@ public class ActivatorDoor : Activator
             transform.localScale = Vector3.Lerp(Vector3.zero, standartScale, (timeElapsed/timeToClose));
             yield return null;
         }
+        isClosed = true;
     }
 }

@@ -86,10 +86,8 @@ public class InputManager : MonoBehaviour
 
     private void CheckAndStartPlanning()
     {
-        if (!player.isInArea)
-        {
-            //gm.SetState(EGameState.GamePlanning);
-        }
+        GameObject[] spawns = GameObject.FindGameObjectsWithTag("Spawn");
+        player.MoveToPoint(spawns[0].transform.position);
     }
 
     private void OnEnable()

@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 public class LevelManager : MonoBehaviour
 {
@@ -32,9 +33,26 @@ public class LevelManager : MonoBehaviour
         }
         DontDestroyOnLoad(gameObject);
         instance = this;
-        offsetPlayable = 2;
         StartCoroutine(LevelLoadingInitial(1));
     }
+
+    void LevelStart(int levelNum)
+    {
+        GameObject[] spawns = GameObject.FindGameObjectsWithTag("Spawn");
+        GameObject curSpawn = spawns.First(x => x.scene.buildIndex == SceneManager.GetActiveScene().buildIndex);
+        Player.GetInstance().transform.position = curSpawn.transform.position;
+        Player.GetInstance().MoveToPoint(curSpawn.transform.GetComponentInChildren<Trigger>().gameObject.transform.position);
+    }
+
+    void LevelEnd(int levelNum)
+    {
+
+    }
+
+
+
+
+
 
     IEnumerator LevelLoadingInitial(int loadIdx)
     {
@@ -49,15 +67,15 @@ public class LevelManager : MonoBehaviour
         }
         SceneManager.SetActiveScene(SceneManager.GetSceneAt(1));
 
-        curLevel = SceneManager.GetActiveScene().buildIndex - offsetPlayable;
+        curLevel = SceneManager.GetActiveScene().buildIndex;
         openedLevels = PlayerPrefs.GetInt("OpenedLevels", 1);
-        totalLevels = SceneManager.sceneCountInBuildSettings - offsetPlayable;
+        totalLevels = SceneManager.sceneCountInBuildSettings;
         //fadeAnimator.SetBool("Faded", false);
     }
 
     public void LoadNextLevel()
     {
-        int currentBuild = curLevel + offsetPlayable;
+        int currentBuild = curLevel;
         curLevel++;
         if (curLevel + 1 > totalLevels)
         {
@@ -71,14 +89,14 @@ public class LevelManager : MonoBehaviour
                 PlayerPrefs.SetInt("OpenedLevels", openedLevels);
             }
         }
-        int newBuild = curLevel + offsetPlayable;
+        int newBuild = curLevel;
         StartCoroutine(LevelLoading(newBuild, currentBuild));
     }
 
     public void LoadLevel(int levelNum)
     {
-        int currentBuild = curLevel + offsetPlayable;
-        int newBuild = levelNum + offsetPlayable;
+        int currentBuild = curLevel;
+        int newBuild = levelNum;
         StartCoroutine(LevelLoading(newBuild, currentBuild));
         curLevel = levelNum;
     }
@@ -91,10 +109,6 @@ public class LevelManager : MonoBehaviour
 
     IEnumerator LevelLoading(int loadIdx, int unloadIdx)
     {
-        if (Player.GetInstance() != null)
-        {
-            //Player.GetInstance().Animate();
-        }
         //fadeAnimator.SetBool("Faded", true);
         yield return new WaitForSeconds(1.5f);
         SceneManager.UnloadSceneAsync(unloadIdx);

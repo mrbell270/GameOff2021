@@ -4,6 +4,7 @@ using UnityEngine;
 using Sirenix.OdinInspector;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 
 public class Player : SerializedMonoBehaviour
 {
@@ -117,15 +118,15 @@ public class Player : SerializedMonoBehaviour
 
     void Move()
     {
-        if (canMove)
-        {
-            movementController[currentController].Move(movementVector, currentForm, crouchingError, jumpingError, isOnLadder);
-        }
+        movementController[currentController].Move(movementVector, currentForm, crouchingError, jumpingError, isOnLadder);
     }
 
     public void MoveAction(Vector2 inputVector)
     {
-        movementVector = inputVector;
+        if (canMove)
+        {
+            movementVector = inputVector;
+        }
     }
 
     // States
@@ -143,12 +144,6 @@ public class Player : SerializedMonoBehaviour
     }
 
     public void SetPaused()
-    {
-        isPlaying = false;
-        Time.timeScale = 0;
-    }
-
-    public void SetDialog()
     {
         isPlaying = false;
         Time.timeScale = 0;
@@ -266,6 +261,27 @@ public class Player : SerializedMonoBehaviour
             default:
                 break;
         }
+    }
+
+    public void MoveToPoint(Vector2 point)
+    {
+        canMove = false;
+        StartCoroutine(MoveToPointCoroutine(point));
+    }
+
+    IEnumerator MoveToPointCoroutine(Vector2 point)
+    {
+        Vector2 direction = point - (Vector2)transform.position;
+        while(direction.magnitude > 0.3)
+        {
+            direction = point - (Vector2)transform.position;
+            movementVector = direction.normalized;
+            yield return null;
+        }
+        Debug.Log("DONE");
+        movementVector = Vector2.zero;
+        GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+        canMove = true;
     }
 
     // Triggers END
